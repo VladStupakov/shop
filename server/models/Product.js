@@ -1,5 +1,18 @@
 import mongoose from 'mongoose'
 
+const reviewSchema = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
+    rating: {
+        type: Number
+    },
+    comment: {
+        type: String
+    }
+})
+
 const productShema = new mongoose.Schema({
     name: {
         type: String,
@@ -43,16 +56,7 @@ const productShema = new mongoose.Schema({
     },
     reviews: [
         {
-            user: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'users'
-            },
-            rating: {
-                type: Number
-            },
-            comment: {
-                type: String
-            }
+            reviewSchema
         }
     ],
     totalRating:{

@@ -2,13 +2,15 @@ import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import mongoose from 'mongoose'
-import userRouter from './routes/user.js'
-import productRouter from './routes/product.js'
+import router from './routes/index.js'
+import path from 'path'
+import errorHandler from './middlewares/errorHandler.js'
 
 dotenv.config()
 
 const app = express()
 const port = process.env.PORT || 3000
+const __dirname = path.resolve()
 
 const conection_url = process.env.DB_CONNECTION_STRING
 mongoose
@@ -23,7 +25,8 @@ mongoose
 
 app.use(express.json())    
 app.use(cors())
-app.use('/', userRouter)
-app.use('/', productRouter)
+app.use('/', router)
+app.use(express.static(path.join(__dirname, '/uploads')))
+app.use(errorHandler)
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

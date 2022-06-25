@@ -3,12 +3,10 @@ import mongoose from 'mongoose'
 const userShema = new mongoose.Schema({
     name: {
         type: String,
-        required: true,
         minlength: 2
     },
     surname: {
         type: String,
-        required: true,
         minlength: 2
     },
     email: {
@@ -28,9 +26,9 @@ const userShema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    isAdmin: {
-        type: Boolean,
-        default: false
+    role: {
+        type: String,
+        default: 'user'
     },
 },
     { timestamps: true }
