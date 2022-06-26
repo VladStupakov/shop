@@ -12,6 +12,12 @@ class CategoryController {
     async getOne(req, res) {
         
     }
+    async update(req, res){
+
+    }
+    async delete(req, res){
+        
+    }
 }
 
 export default new CategoryController()

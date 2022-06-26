@@ -12,6 +12,9 @@ class OrderController {
     async getOne(req, res) {
         
     }
+    async getAllUserOrders(req, res){
+        
+    }
 }
 
 export default new OrderController()
