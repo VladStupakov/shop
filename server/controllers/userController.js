@@ -14,7 +14,7 @@ const generateJwt = (id, email, role) => {
 
 class UserController {
     async registration(req, res, next) {
-        const { email, password} = req.body
+        const { email, password, isSeller} = req.body
         if (!email || !password) {
             return next(ApiError.badRequest('Wrong email or password'))
         }
@@ -22,12 +22,11 @@ class UserController {
         if (isEmailInUse) {
             return next(ApiError.badRequest('This email already in use'))
         }
-        const salt = await bcrypt.genSalt(10)
+        const salt = await bcrypt.genSalt(Number(process.env.BCRYPT_SALT))
         const hashPassword = await bcrypt.hash(password, salt)
-        const user = await User.create({ email, password: hashPassword })
+        const user = await User.create({ email, password: hashPassword, role: isSeller? 'seller' : 'user' })
         const basket = await Basket.create({ user: user._id })
-        const token = generateJwt(user._id, user.email, user.role)
-        return res.json({ token })
+        return res.json({ user })
     }
 
     async login(req, res, next) {
@@ -44,8 +43,13 @@ class UserController {
         return res.json({ token })
     }
 
-    async check(req, res, next) {
-        const token = generateJwt(req.user._id, req.user.email, req.user.role)
+    async update(req, res, next){
+        const {email, password, name, surname} = req.body
+        const {id} = req.params
+        const salt = await bcrypt.genSalt(Number(process.env.BCRYPT_SALT))
+        const hashPassword = await bcrypt.hash(password, salt)
+        const user = await User.findByIdAndUpdate(id, {email, password: hashPassword, name, surname})
+        const token = generateJwt(user._id, user.email, user.role)
         return res.json({ token })
     }
 }

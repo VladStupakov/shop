@@ -6,7 +6,7 @@ const router = express.Router()
 router.post('/', checkRole('admin'), categoryController.create)
 router.get('/', categoryController.getAll)
 router.get('/:id', categoryController.getOne)
-router.patch('/:id', checkRole('admin'), categoryController.update)
+router.put('/:id', checkRole('admin'), categoryController.update)
 router.delete('/:id', checkRole('admin'), categoryController.delete)
 
 export default router

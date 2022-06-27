@@ -8,6 +8,10 @@ const brandShema = new mongoose.Schema({
     },
     country: {
         type: String
+    },
+    creator:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     }
 });
 
