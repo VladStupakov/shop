@@ -5,6 +5,7 @@ import mongoose from 'mongoose'
 import router from './routes/index.js'
 import path from 'path'
 import errorHandler from './middlewares/errorHandler.js'
+import cookieParser from 'cookie-parser'
 
 dotenv.config()
 
@@ -24,6 +25,7 @@ mongoose
 
 
 app.use(express.json())
+app.use(cookieParser())
 app.use(cors())
 app.use('/', router)
 app.use(express.static(path.join(__dirname, '/uploads')))

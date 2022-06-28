@@ -14,7 +14,7 @@ const userShema = new mongoose.Schema({
         required: true,
         unique: true,
     },
-    varified: {
+    verified: {
         type: Boolean,
         default: false
     },
@@ -30,6 +30,9 @@ const userShema = new mongoose.Schema({
         type: String,
         default: 'user'
     },
+    verificationLink: {
+        type: String
+    }
 },
     { timestamps: true }
 );
