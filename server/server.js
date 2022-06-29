@@ -6,6 +6,7 @@ import router from './routes/index.js'
 import path from 'path'
 import errorHandler from './middlewares/errorHandler.js'
 import cookieParser from 'cookie-parser'
+import userController from './controllers/userController.js'
 
 dotenv.config()
 

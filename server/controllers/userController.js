@@ -7,6 +7,13 @@ import mailService from '../service/mailService.js';
 import tokenService from '../service/tokenService.js';
 import UserDto from '../dtos/user-dto.js';
 
+const generateTokens = async (user) => {
+    const userDto = new UserDto(user)
+    const tokens = tokenService.generateTokens({ ...userDto })
+    await tokenService.saveToken(userDto.id, tokens.refreshToken)
+    return { tokens, userDto }
+}
+
 class UserController {
     async registration(req, res, next) {
         const { email, password, isSeller } = req.body
@@ -27,9 +34,7 @@ class UserController {
         //PORT problems
         //await mailService.sendVarificationEmail(email, `${process.env.SERVER_URL}/user/varify/${varificationLink}`)
 
-        const userDto = new UserDto(user)
-        const tokens = tokenService.generateTokens({ ...userDto })
-        await tokenService.saveToken(userDto.id, tokens.refreshToken)
+        const { tokens, userDto } = await generateTokens(user)
 
         const basket = await Basket.create({ user: user._id })
 
@@ -51,7 +56,11 @@ class UserController {
         if (!comparePassword) {
             return next(ApiError.internal('Wrong password'))
         }
-        return res.json({ token })
+        const { tokens, userDto } = generateTokens(user)
+        return res.json({
+            ...tokens,
+            user: userDto
+        })
     }
 
     async update(req, res, next) {
@@ -60,12 +69,18 @@ class UserController {
         const salt = await bcrypt.genSalt(Number(process.env.BCRYPT_SALT))
         const hashPassword = await bcrypt.hash(password, salt)
         const user = await User.findByIdAndUpdate(id, { email, password: hashPassword, name, surname })
-        const token = generateJwt(user._id, user.email, user.role)
-        return res.json({ token })
+        const { tokens, userDto } = await generateTokens(user)
+        return res.json({
+            ...tokens,
+            user: userDto
+        })
     }
 
     async logout(req, res, next) {
-
+        const { refreshToken } = req.cookies
+        const token = await tokenService.removeToken(refreshToken)
+        res.clearCookie('refreshToken')
+        return res.json(token)
     }
 
     async verifyUser(req, res, next) {
@@ -73,12 +88,22 @@ class UserController {
         const user = await User.findOne({ verificationLink })
         user.verified = true
         await user.save()
-        res.redirect(process.env.CLIENT_URL)       
+        res.redirect(process.env.CLIENT_URL)
     }
 
-    async refreshToken(req, res, next) {
-
+    async refresh(req, res, next) {
+        console.log('im called')
+        const { refreshToken } = req.cookies
+        if (!refreshToken)
+            return next()
+        const user = req.user
+        const { tokens, userDto } = generateTokens(user)
+        return res.json({
+            ...tokens,
+            user: userDto
+        })
     }
+
 }
 
 export default new UserController()
