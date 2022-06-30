@@ -11,9 +11,9 @@ const orderShema = new mongoose.Schema({
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'Product'
             },
-            quantity: {
+            basketQuantity: {
                 type: Number,
-                default: 1
+                required: true
             }
         }
     ],
@@ -23,11 +23,13 @@ const orderShema = new mongoose.Schema({
     address: {
         type: Object
     },
-    status:{
+    status: {
         type: String,
         default: 'In process'
     }
-});
+},
+    { timestamps: true }
+);
 
 const Order = mongoose.model('Order', orderShema)
 
