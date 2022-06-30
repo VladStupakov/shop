@@ -5,7 +5,7 @@ class BrandController {
     async create(req, res, next) {
        const {name, country} = req.body
        const creator = req.user.id
-       const brand= Brand.create({name, country, creator})
+       const brand = await Brand.create({name, country, creator})
        return res.json(brand)
     }
 

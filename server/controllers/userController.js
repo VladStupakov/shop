@@ -56,7 +56,8 @@ class UserController {
         if (!comparePassword) {
             return next(ApiError.internal('Wrong password'))
         }
-        const { tokens, userDto } = generateTokens(user)
+        const { tokens, userDto } = await generateTokens(user)
+        res.cookie('refreshToken', tokens.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
         return res.json({
             ...tokens,
             user: userDto
@@ -91,18 +92,6 @@ class UserController {
         res.redirect(process.env.CLIENT_URL)
     }
 
-    async refresh(req, res, next) {
-        console.log('im called')
-        const { refreshToken } = req.cookies
-        if (!refreshToken)
-            return next()
-        const user = req.user
-        const { tokens, userDto } = generateTokens(user)
-        return res.json({
-            ...tokens,
-            user: userDto
-        })
-    }
 
 }
 

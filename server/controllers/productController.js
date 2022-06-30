@@ -5,9 +5,8 @@ import Product from "../models/Product.js"
 class ProductController {
     async create(req, res, next) {
         try {
-            console.log(req.user)
             let { name, description, brand, categories, price, quantity, img } = req.body
-            const product = await Product.create({ name, description, price, brand, categories, quantity, img});
+            const product = await Product.create({ name, description, price, brand, categories, quantity, img });
             return res.json(product)
         } catch (e) {
             next(ApiError.badRequest(e.message))
@@ -23,6 +22,11 @@ class ProductController {
         if (!brandId && !categoryId) {
             products = await Product.aggregate([
                 {
+                    $match: {
+                        quantity: { $ne: 0 }
+                    }
+                },
+                {
                     '$facet': {
                         data: [{ $skip: offset }, { $limit: limit }],
                         totalQuantity: [{ $count: "total" }],
@@ -34,7 +38,8 @@ class ProductController {
             products = await Product.aggregate([
                 {
                     $match: {
-                        "brand": mongoose.Types.ObjectId(brandId)
+                        "brand": mongoose.Types.ObjectId(brandId),
+                        quantity: { $ne: 0 }
                     }
                 },
                 {
@@ -49,7 +54,8 @@ class ProductController {
             products = await Product.aggregate([
                 {
                     $match: {
-                        "categories": mongoose.Types.ObjectId(categoryId)
+                        "categories": mongoose.Types.ObjectId(categoryId),
+                        quantity: { $ne: 0 }
                     }
                 },
                 {
@@ -65,7 +71,8 @@ class ProductController {
                 {
                     $match: {
                         "categories": mongoose.Types.ObjectId(categoryId),
-                        "brand": mongoose.Types.ObjectId(brandId)
+                        "brand": mongoose.Types.ObjectId(brandId),
+                        quantity: { $ne: 0 }
                     }
                 },
                 {
@@ -88,7 +95,7 @@ class ProductController {
     async update(req, res) {
         try {
             let { name, description, brand, categories, price, quantity } = req.body
-            const {id} = req.params
+            const { id } = req.params
             // const { img } = req.files
             // let fileName = uuid.v4() + ".jpg"
             // img.mv(path.resolve(__dirname, '..', 'static', fileName))

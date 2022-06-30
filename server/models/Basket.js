@@ -11,7 +11,7 @@ const basketShema = new mongoose.Schema({
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'Product'
             },
-            quantity: {
+            basketQuantity: {
                 type: Number,
                 default: 1
             }
