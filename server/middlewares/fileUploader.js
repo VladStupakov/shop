@@ -8,7 +8,7 @@ let storage = multer.diskStorage({
     },
     filename: (req, file, cb) => {
         const fileName = v4() + path.extname(file.originalname)
-        req.body.img = JSON.stringify(fileName)
+        req.body.img = fileName
         cb(null, fileName)
     }
 })

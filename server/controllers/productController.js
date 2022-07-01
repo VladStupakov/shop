@@ -1,6 +1,7 @@
 import mongoose from "mongoose"
 import ApiError from "../error/ApiError.js"
 import Product from "../models/Product.js"
+import fs from 'fs'
 
 class ProductController {
     async create(req, res, next) {
@@ -96,10 +97,7 @@ class ProductController {
         try {
             let { name, description, brand, categories, price, quantity } = req.body
             const { id } = req.params
-            // const { img } = req.files
-            // let fileName = uuid.v4() + ".jpg"
-            // img.mv(path.resolve(__dirname, '..', 'static', fileName))
-            const product = await Product.findByIdAndUpdate(id, { name, description, price, brand, categories, quantity, img: 'fileName' });
+            const product = await Product.findByIdAndUpdate(id, { name, description, price, brand, categories, quantity, img });
             return res.json(product)
         } catch (e) {
             next(ApiError.badRequest(e.message))
@@ -109,6 +107,7 @@ class ProductController {
     async delete(req, res) {
         const { id } = req.params
         const product = await Product.findByIdAndDelete(id)
+        fs.unlink(`uploads/${product.img}`, () => { })
         return res.json(product)
     }
 }

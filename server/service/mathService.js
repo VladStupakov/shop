@@ -6,7 +6,7 @@ class MathService {
             sum += product.basketQuantity * product.productId.price
         });
         return sum
-    }    
+    }
 
 }
 
