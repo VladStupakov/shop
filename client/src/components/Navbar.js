@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import SearchIcon from '@mui/icons-material/Search';
-import { Badge } from '@mui/material';
+import { Badge, Box, Button, FormControl, IconButton, InputBase, InputLabel, MenuItem, Select } from '@mui/material';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';;
 
 const languages = ["ENG", "UA", "FR", "DE"]
@@ -23,7 +23,7 @@ const Left = styled.div`
     align-items: center;
 `
 
-const Language = styled.select`
+const Language = styled.div`
     font-size: 16px;
     cursor: pointer;
 `
@@ -32,11 +32,7 @@ const SearchContainer = styled.div`
     display: flex;
     align-items: center;
     margin-left: 20px;
-`
-
-const SearchInput = styled.input`
-    border: none;
-    height: 30px;
+    padding: 3px;
 `
 
 const Center = styled.div`
@@ -44,7 +40,7 @@ const Center = styled.div`
     text-align: center;
 `
 
-const Logo = styled.h2`
+const Logo = styled.h1`
     font-weight: bold;
 `
 
@@ -54,52 +50,82 @@ const Right = styled.div`
     justify-content: flex-end;
 `
 
-const MenuItem = styled.div`
-    padding-left: 10px;
-`
-
-const Login = styled.button`
-
-`
-
-const Register = styled.button`
-
+const ButtonListItem = styled.div`
+    padding-left: 15px;
+    align-items: center;
+    display: flex;
+    flex-wrap: 'wrap'
 `
 
 const Navbar = () => {
+
+    const [language, setLanguage] = useState('');
+    const [searchQuery, setSearchQuery] = useState()
+
+    const handleLanguageChange = (e) => {
+        setLanguage(e.target.value);
+    };
+
+    const handleSearchClick = () => {
+
+    }
+
+    const inputHandleChange = (e) => {
+        setSearchQuery(e.target.value)
+    }
+
+    useEffect(() => {
+
+    }, [searchQuery])
+
     return (
         <Container>
             <Wrapper>
                 <Left>
                     <Language>
-                        {languages.map(item => {
-                            return <option value={item}>{item}</option>
-                        })}
+                        <Box sx={{ minWidth: 120, minHeight: "30px" }}>
+                            <FormControl fullWidth>
+                                <InputLabel id="select-label">Language</InputLabel>
+                                <Select
+                                    labelId="select-label"
+                                    id="select"
+                                    value={language}
+                                    label="Language"
+                                    onChange={handleLanguageChange}
+                                >
+                                    {languages.map(lang => {
+                                        return <MenuItem value={lang}>{lang}</MenuItem>
+                                    })}
+                                </Select>
+                            </FormControl>
+                        </Box>
                     </Language>
                     <SearchContainer>
-                        <SearchInput></SearchInput>
-                        <SearchIcon />
+                        <InputBase
+                            sx={{ ml: 1, flex: 1, minWidth: 30 }}
+                            placeholder="Search..."
+                            onChange={inputHandleChange}
+                        />
+                        <IconButton type="submit" sx={{ p: '10px' }} aria-label="search" onClick={handleSearchClick}>
+                            <SearchIcon />
+                        </IconButton>
                     </SearchContainer>
                 </Left>
                 <Center>
                     <Logo>MY LOGO</Logo>
                 </Center>
                 <Right>
-                    <MenuItem>
-                        <Login>
-                            LOGIN
-                        </Login>
-                    </MenuItem>
-                    <MenuItem>
-                        <Register>
-                            REGISTER
-                        </Register>
-                    </MenuItem>
-                    <MenuItem>
-                        <Badge badgeContent={3} color="primary">
+                    <ButtonListItem>
+                        <Button variant="contained" >LOGIN</Button>
+                    </ButtonListItem>
+                    <ButtonListItem>
+                        <Button variant="contained">REGISTER</Button>
+                    </ButtonListItem>
+                    <ButtonListItem>
+                        <Badge badgeContent={3} color="primary" sx={{ cursor: "pointer" }}>
                             <ShoppingCartOutlinedIcon />
                         </Badge>
-                    </MenuItem>
+                    </ButtonListItem>
                 </Right>
             </Wrapper>
         </Container>

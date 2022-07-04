@@ -1,7 +1,7 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
 import styled from 'styled-components'
-import AvertismentSlider from '../components/AvertismentSlider'
+import AvertismentSlider from '../components/AdvertismentSlider'
 
 const Container = styled.div`
 
