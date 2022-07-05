@@ -54,7 +54,7 @@ const ButtonListItem = styled.div`
     padding-left: 15px;
     align-items: center;
     display: flex;
-    flex-wrap: 'wrap'
+    flex-wrap: 'wrap';
 `
 
 const Navbar = () => {

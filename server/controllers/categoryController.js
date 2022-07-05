@@ -3,14 +3,14 @@ import Category from '../models/Category.js'
 
 class CategoryController {
     async create(req, res) {
-        const { name } = req.body
-        const category = await Category.create({ name })
+        const { name, img } = req.body
+        const category = await Category.create({ name, img })
         return res.json(category)
     }
 
     async getAll(req, res) {
-        const categories = await Category.find()
-        return res.json(categories)
+        const data = await Category.find()
+        return res.json(data)
     }
 
     async getOne(req, res) {
