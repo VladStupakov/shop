@@ -75,8 +75,8 @@ const Navbar = () => {
     }
 
     useEffect(() => {
-
-    }, [searchQuery])
+       
+    }, [])
 
     return (
         <Container>

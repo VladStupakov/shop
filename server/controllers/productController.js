@@ -84,7 +84,11 @@ class ProductController {
                 }
             ])
         }
-        return res.json(products)
+        const result = {
+            data: products[0].data,
+            totalQuantity: products[0].totalQuantity[0].total
+        }
+        return res.json(result)
     }
 
     async getOne(req, res) {

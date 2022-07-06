@@ -33,52 +33,57 @@ const Arrow = styled.div`
 `
 const Wrapper = styled.div`
   height: 100%;
-  display: flex; 
-  transform: translate(${props => props.slideIndex * -100}vw);
-  transition: all 0.5s linear;
-`
+  display: flex;
+  transition: all 1.5s ease;
+  transform: translateX(${(props) => props.slideIndex * -100}vw);
+`;
+
 const Slide = styled.div`
+  width: 100vw;
   display: flex;
   align-items: center;
-  width: 100vw;
-  height: 100vh; 
-  background-color: #d2e8ff;
-`
-const ImageContainer = styled.div`
-  flex:1;
-  height: 100%;
-`
-const Image = styled.img`
-  height: 80%;
-`
+  background-color: rgb(205, 229, 253);
+`;
 
-const DescriptionContainer = styled.div`
+const ImageContainer = styled.div`
+  height: auto;
   flex: 1;
+  margin-left: 50px;
+  justify-content: center;
+  display: flex;
+`;
+
+const Image = styled.img`
+  display: flex;
+`;
+
+const Info = styled.div`
+  flex: 2;
   padding: 50px;
-`
+`;
 
 const Title = styled.h1`
-  font-size: 60px;
-`
+  font-size: 70px;
+`;
 
-const Info = styled.p`
+const Description = styled.p`
   margin: 50px 0px;
   font-size: 20px;
-  font-weight: 300;
-  letter-spacing: 2px;
-`
+  font-weight: 500;
+  letter-spacing: 3px;
+`;
 
 
 const AdvertismentSlider = () => {
 
   const [slideIndex, setSlideindex] = useState(0)
 
-  const handleArrowClick = (direction) =>{
-    if(direction ==='left'){
-      setSlideindex(slideIndex > 0? slideIndex -1 : slides.length - 1)
+  const handleArrowClick = (direction) => {
+    if (direction === 'left') {
+      setSlideindex(slideIndex > 0 ? slideIndex - 1 : slides.length - 1)
     }
-    else{
-      setSlideindex(slideIndex < slides.length -1 ? slideIndex + 1 : 0)
+    else {
+      setSlideindex(slideIndex < slides.length - 1 ? slideIndex + 1 : 0)
     }
   }
 
@@ -126,10 +131,10 @@ const AdvertismentSlider = () => {
                 <ImageContainer>
                   <Image src={slide.src} />
                 </ImageContainer>
-                <DescriptionContainer>
+                <Info>
                   <Title>{slide.description.title}</Title>
-                  <Info>{slide.description.info}</Info>
-                </DescriptionContainer>
+                  <Description>{slide.description.info}</Description>
+                </Info>
               </Slide>
             )
           })
