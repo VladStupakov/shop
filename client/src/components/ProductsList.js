@@ -2,9 +2,14 @@ import React, { useEffect } from 'react'
 import { useState } from 'react'
 import styled from 'styled-components'
 import { fetchProducts } from '../API/ProductApi'
+import ProductItem from './ProductItem'
 
 const Container = styled.div`
-    margin-top: 50px;
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;    
+    flex: 4;
+    margin-right: 60px;
 `
 
 
@@ -17,17 +22,13 @@ const ProductsList = () => {
         .then(products => setProducts(products.data))
     }, [])
 
+    
+
     return (
         <Container>
             {
                 products.map(product =>{
-                    return(
-                        <div>
-                            <div>{product.name}</div>
-                            <div>{product.description}</div>
-                            <div>{product.brand}</div>
-                        </div>
-                    )
+                   return <ProductItem product={product} key={product._id}/>
                 })
             }
         </Container>

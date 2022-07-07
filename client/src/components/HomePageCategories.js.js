@@ -7,16 +7,16 @@ import { Link } from "react-router-dom";
 const Container = styled.div`
   display: flex;
   padding: 20px;
-  justify-content: space-between;
   flex-wrap: wrap;
 `;
 
 const ItemContainer = styled(Link)`
-  margin: 10px;
+  margin-left: 30px;
+  margin-top: 20px;
   text-decoration: none;
   height: 70vh;
   position: relative;
-  width: 25vw;
+  width: 22vw;
   border: 1px solid black;
   display: flex;
   flex-direction: column;
@@ -70,9 +70,10 @@ const Button = styled.button`
     color:gray;
     font-weight: 600;
     display: flex; 
+    cursor: pointer;
 `;
 
-const MainPageCategories = () => {
+const HomePageCategories = () => {
 
     const [categories, setCategories] = useState()
 
@@ -86,7 +87,7 @@ const MainPageCategories = () => {
             {categories ?
                 categories.map(category => {
                     return (
-                        <ItemContainer to="/products">
+                        <ItemContainer to="/products" key={category._id}>
                             <Title>{category.name}</Title>
                             <ImageContainer>
                                 <Image src={process.env.REACT_APP_API_URL + category.img} ></Image>
@@ -103,4 +104,4 @@ const MainPageCategories = () => {
     );
 };
 
-export default MainPageCategories;
+export default HomePageCategories;

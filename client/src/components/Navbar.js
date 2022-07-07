@@ -94,7 +94,7 @@ const Navbar = () => {
                                     onChange={handleLanguageChange}
                                 >
                                     {languages.map(lang => {
-                                        return <MenuItem value={lang}>{lang}</MenuItem>
+                                        return <MenuItem value={lang} key={lang}>{lang}</MenuItem>
                                     })}
                                 </Select>
                             </FormControl>

@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import AdvertismentSlider from '../components/AdvertismentSlider'
-import MainPageCategories from '../components/MainPageCategories.js'
+import HomePageCategories from '../components/HomePageCategories.js.js'
 
 const Container = styled.div`
 
@@ -11,7 +11,7 @@ const Home = () => {
   return (
     <Container>     
       <AdvertismentSlider />
-      <MainPageCategories />
+      <HomePageCategories />
     </Container>
   )
 }
