@@ -15,12 +15,12 @@ class ProductController {
     }
 
     async getAll(req, res) {
-        let { brandId, categoryId, limit, page } = req.query
+        let { brands, categoryId, limit, page } = req.query
         page = page || 1
         limit = limit || 100
         let offset = page * limit - limit
         let products;
-        if (!brandId && !categoryId) {
+        if (!brands && !categoryId) {
             products = await Product.aggregate([
                 {
                     $match: {
@@ -35,11 +35,12 @@ class ProductController {
                 }
             ])
         }
-        if (brandId && !categoryId) {
+        if (brands && !categoryId) {
+            const b = brands.map(br => {return mongoose.Types.ObjectId(br)})
             products = await Product.aggregate([
                 {
                     $match: {
-                        "brand": mongoose.Types.ObjectId(brandId),
+                        brand: { $in: b } ,
                         quantity: { $ne: 0 }
                     }
                 },
@@ -51,11 +52,11 @@ class ProductController {
                 }
             ])
         }
-        if (!brandId && categoryId) {
+        if (!brands && categoryId) {
             products = await Product.aggregate([
                 {
                     $match: {
-                        "categories": mongoose.Types.ObjectId(categoryId),
+                        categories: mongoose.Types.ObjectId(categoryId),
                         quantity: { $ne: 0 }
                     }
                 },
@@ -67,12 +68,13 @@ class ProductController {
                 }
             ])
         }
-        if (brandId && categoryId) {
+        if (brands && categoryId) {
+            const b = brands.map(br => {return mongoose.Types.ObjectId(br)})
             products = await Product.aggregate([
                 {
                     $match: {
-                        "categories": mongoose.Types.ObjectId(categoryId),
-                        "brand": mongoose.Types.ObjectId(brandId),
+                        categories: mongoose.Types.ObjectId(categoryId),
+                        brand: { $in: b } ,
                         quantity: { $ne: 0 }
                     }
                 },

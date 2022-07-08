@@ -8,6 +8,7 @@ const Container = styled.div`
   display: flex;
   padding: 20px;
   flex-wrap: wrap;
+  cursor: pointer;
 `;
 
 const ItemContainer = styled(Link)`
@@ -22,9 +23,10 @@ const ItemContainer = styled(Link)`
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  transition: box-shadow .3s;
+  transition: box-shadow .3s, scale .2s;
   :hover{
     box-shadow: 0 0 10px 11px rgb(205, 229, 253);
+    scale: 1.05;
   }
   :focus, :hover, :visited, :link, :active {
         text-decoration: none;
@@ -64,13 +66,13 @@ const Info = styled.div`
 `;
 
 const Button = styled.button`
+    opacity: 0;
     border:none;
     padding: 10px;
     background-color: white;
     color:gray;
     font-weight: 600;
     display: flex; 
-    cursor: pointer;
 `;
 
 const HomePageCategories = () => {

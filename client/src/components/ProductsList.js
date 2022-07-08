@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
 import styled from 'styled-components'
-import { fetchProducts } from '../API/ProductApi'
 import ProductItem from './ProductItem'
 
 const Container = styled.div`
@@ -13,21 +12,12 @@ const Container = styled.div`
 `
 
 
-const ProductsList = () => {
-
-    const [products, setProducts] = useState([])
-
-    useEffect(() => {
-        fetchProducts()
-        .then(products => setProducts(products.data))
-    }, [])
-
+const ProductsList = ({products}) => {
     
-
     return (
         <Container>
             {
-                products.map(product =>{
+               products && products.map(product =>{
                    return <ProductItem product={product} key={product._id}/>
                 })
             }
