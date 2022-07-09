@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import SearchIcon from '@mui/icons-material/Search';
 import { Badge, Box, Button, FormControl, IconButton, InputBase, InputLabel, MenuItem, Select } from '@mui/material';
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';;
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import { Link } from "react-router-dom";
 
 const languages = ["ENG", "UA", "FR", "DE"]
 
@@ -57,6 +58,12 @@ const ButtonListItem = styled.div`
     flex-wrap: 'wrap';
 `
 
+const CustomLink = styled(Link)`
+    text-decoration: none;
+    display: flex;
+    color: black;
+`
+
 const Navbar = () => {
 
     const [language, setLanguage] = useState('');
@@ -75,7 +82,7 @@ const Navbar = () => {
     }
 
     useEffect(() => {
-       
+
     }, [])
 
     return (
@@ -115,17 +122,23 @@ const Navbar = () => {
                     <Logo>MY LOGO</Logo>
                 </Center>
                 <Right>
-                    <ButtonListItem>
-                        <Button variant="contained" >LOGIN</Button>
-                    </ButtonListItem>
-                    <ButtonListItem>
-                        <Button variant="contained">REGISTER</Button>
-                    </ButtonListItem>
-                    <ButtonListItem>
-                        <Badge badgeContent={3} color="primary" sx={{ cursor: "pointer" }}>
-                            <ShoppingCartOutlinedIcon />
-                        </Badge>
-                    </ButtonListItem>
+                    <CustomLink to='/login'>
+                        <ButtonListItem>
+                            <Button variant="contained" >LOGIN</Button>
+                        </ButtonListItem>
+                    </CustomLink>
+                    <CustomLink to='/register'>
+                        <ButtonListItem>
+                            <Button variant="contained">REGISTER</Button>
+                        </ButtonListItem>
+                    </CustomLink>
+                    <CustomLink to='/cart'>
+                        <ButtonListItem>
+                            <Badge badgeContent={3} color="primary" sx={{ cursor: "pointer" }}>
+                                <ShoppingCartOutlinedIcon />
+                            </Badge>
+                        </ButtonListItem>
+                    </CustomLink>
                 </Right>
             </Wrapper>
         </Container>

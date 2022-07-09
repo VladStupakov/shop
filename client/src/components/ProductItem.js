@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { Link } from "react-router-dom";
 
 const IconContainer = styled.div`
     opacity: 0;
@@ -17,7 +18,7 @@ const IconContainer = styled.div`
     justify-content: end;
 `
 
-const Container = styled.div`
+const Container = styled(Link)`
 margin: 5px;
 min-width: 340px;
 height: 350px;
@@ -29,7 +30,6 @@ background-color: #f8f8f8;
 position: relative;
 border: 1px solid black;
 transition: box-shadow .3s;
-cursor: pointer;
 flex-direction: column;
 &:hover ${IconContainer}{
     opacity: 1;
@@ -38,6 +38,11 @@ flex-direction: column;
 :hover{
     box-shadow: 0 0 5px 5px rgb(136, 136, 136);
   }
+text-decoration: none;
+&:focus, &:hover, &:visited, &:link, &:active {
+    text-decoration: none;
+}
+color: inherit;
 `
 
 const Image = styled.img`
@@ -85,14 +90,23 @@ const ProductName = styled.div`
 
 const ProductItem = ({ product }) => {
 
+
+    const handleAddToFavouritesClick = (event) =>{
+        event.preventDefault()
+    }
+
+    const handleAddToCartClick = (event) =>{
+        event.preventDefault()
+    }
+
     return (
-        <Container>
+        <Container to={`/product/${product._id}`}>
             <Image src={process.env.REACT_APP_API_URL + product.img} />
             <IconContainer>
-                <Icon>
+                <Icon onClick={handleAddToFavouritesClick}>
                     <FavoriteBorderIcon />
                 </Icon>
-                <Icon>
+                <Icon onClick={handleAddToCartClick}>
                     <AddShoppingCartIcon />
                 </Icon>
             </IconContainer>
