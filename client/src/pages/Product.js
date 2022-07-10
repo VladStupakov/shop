@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import { Add, Remove } from '@mui/icons-material/'
 import { useLocation } from "react-router-dom";
 import { fetchOneProduct } from '../API/ProductApi';
+import RatingForm from '../components/RatingForm';
+import CommentSection from '../components/CommentSection';
 
 const Container = styled.div`
     
@@ -14,7 +16,7 @@ const Wrapper = styled.div`
 `;
 
 const ImgContainer = styled.div`
-  flex: 1;
+  flex: 2;
 `;
 
 const Image = styled.img`
@@ -23,8 +25,7 @@ const Image = styled.img`
 `;
 
 const InfoContainer = styled.div`
-  flex: 1;
-  padding: 0px 50px;
+  flex: 2;
 `;
 
 const Title = styled.h1`
@@ -90,7 +91,7 @@ const Product = () => {
   useEffect(() => {
     fetchOneProduct(id)
       .then(product => setProduct(product))
-  }, [])
+  }, [id])
 
   const handleQuantityChange = (operation) => {
     if (operation === "dec") {
@@ -100,7 +101,7 @@ const Product = () => {
     }
   };
 
-  const handleQuantitySet = (event) =>{
+  const handleQuantitySet = (event) => {
     setQuantity(Number(event.target.value))
   }
 
@@ -117,13 +118,15 @@ const Product = () => {
           <Price>{product.price} UAH</Price>
           <AddContainer>
             <AmountContainer>
-              <Remove onClick={() => handleQuantityChange("dec")}  sx={{cursor: 'pointer'}}/>
-              <Amount value={quantity} onChange={handleQuantitySet}/>             
-              <Add onClick={() => handleQuantityChange("inc")} sx={{cursor: 'pointer'}}/>
+              <Remove onClick={() => handleQuantityChange("dec")} sx={{ cursor: 'pointer' }} />
+              <Amount value={quantity} onChange={handleQuantitySet} />
+              <Add onClick={() => handleQuantityChange("inc")} sx={{ cursor: 'pointer' }} />
             </AmountContainer>
             <Button >ADD TO CART</Button>
           </AddContainer>
+          <RatingForm />
         </InfoContainer>
+        <CommentSection comments={product.reviews} />
       </Wrapper>
     </Container>
   );
