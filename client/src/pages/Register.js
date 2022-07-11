@@ -1,6 +1,9 @@
 import styled from "styled-components"
-import * as Yup from "yup";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { useFormik } from "formik";
+import { useEffect, useState } from "react";
+import { registrationSchema } from "../schemas/validationSchemas";
+import { Button, Checkbox, FormControlLabel, IconButton, InputAdornment, TextField } from '@mui/material'
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const Container = styled.div`
   margin-top: 50px;
@@ -20,123 +23,143 @@ const Wrapper = styled.div`
   width: 40%;
   padding: 20px;
   background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `;
 
+const FormTitle = styled.h2`
+  
+`
 
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+`
+const InputContainer = styled.div`
+  margin-bottom: 20px;
+`
 
+const Input = styled(TextField)`
+  width: 100%;
+`
+
+const SubmitButton = styled(Button)`
+
+`
+
+const initialValues = {
+  name: "",
+  surname: "",
+  email: "",
+  password: "",
+  isSeller: false
+};
 
 const Register = () => {
 
-  const validationSchema = Yup.object({
-    name: Yup.string()
-      .min(2, "Name must be at least 2 characters long")
-      .max(20, "Name must be not longer than 20 characters")
-      .required("Name is required"),
-    surname: Yup.string()
-      .min(2, "Surname must be at least 2 characters long")
-      .max(20, "Surname must be not longer than 20 characters")
-      .required("Surname is required"),
-    email: Yup.string().email().required("Email is required"),
-    password: Yup.string()
-      .required("Password is required")
-      .matches('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})', 'Password must be at least 8 characters long and contain at one lower and upper case letter and a number ')
-  });
+  const [showPassword, setShowPassword] = useState(false)
 
-  const initialValues = {
-    name: "",
-    surname: "",
-    email: "",
-    password: "",
-  };
+  const formSubmit = (values) => {
+    console.log(values)
+  }
 
-  const onSubmit = (values) => {
-    
-  };
+  const formik = useFormik({
+    initialValues,
+    validationSchema: registrationSchema,
+    onSubmit: formSubmit
+  })
 
-  const renderError = (message) => <p>{message}</p>;
+  const handleClickShowPassword = () => {
+    setShowPassword(prevState => !prevState)
+  }
 
   return (
     <Container>
       <Wrapper>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={async (values, { resetForm }) => {
-            onSubmit(values);
-            resetForm();
-          }}
-        >
-          <Form>
-            <div
-              style={{
-                width: "60%",
+        <FormTitle>
+          Registration
+        </FormTitle>
+        <Form onSubmit={formik.handleSubmit}>
+          <InputContainer>
+            <Input
+              id="name"
+              name="name"
+              label="Name"
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.name && Boolean(formik.errors.name)}
+              helperText={formik.touched.name && formik.errors.name}
+              autoComplete="off"
+            />
+          </InputContainer>
+          <InputContainer>
+            <Input
+              id="surname"
+              name="surname"
+              label="Surname"
+              value={formik.values.surname}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.surname && Boolean(formik.errors.surname)}
+              helperText={formik.touched.surname && formik.errors.surname}
+              autoComplete="off"
+            />
+          </InputContainer>
+          <InputContainer>
+            <Input
+              id="email"
+              name="email"
+              label="Email"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.email && Boolean(formik.errors.email)}
+              helperText={formik.touched.email && formik.errors.email}
+              autoComplete="off"
+            />
+          </InputContainer>
+          <InputContainer>
+            <Input
+              id="password"
+              name="password"
+              label="Password"
+              type={showPassword ? 'text' : 'password'}
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.password && Boolean(formik.errors.password)}
+              helperText={formik.touched.password && formik.errors.password}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position='end'>
+                    <IconButton
+                      aria-label='toggle password visibility'
+                      onClick={handleClickShowPassword}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
               }}
-            >
-              <div>
-                <label htmlFor="name">
-                  Name
-                </label>
-                <div>
-                  <Field
-                    name="name"
-                    type="text"
-                    className="input"
-                    placeholder="Name"
-                  />
-                  <ErrorMessage name="name" render={renderError} />
-                </div>
-              </div>
-              <div>
-                <label className="label" htmlFor="surname">
-                  Surname
-                </label>
-                <div>
-                  <Field
-                    name="surname"
-                    type="text"
-                    className="input"
-                    placeholder="Surname"
-                  />
-                  <ErrorMessage name="surname" render={renderError} />
-                </div>
-              </div>
-              <div>
-                <label  htmlFor="email">
-                  Email address
-                </label>
-                <div>
-                  <Field
-                    name="email"
-                    type="text"
-                    className="input"
-                    placeholder="Email address"
-                  />
-                  <ErrorMessage name="email" render={renderError} />
-                </div>
-              </div>
-              <div>
-                <label  htmlFor="password">
-                  Password
-                </label>
-                <div>
-                  <Field
-                    name="password"
-                    type="text"
-                    className="input"
-                    placeholder="Password"
-                  />
-                  <ErrorMessage name="password" render={renderError} />
-                </div>
-              </div>
-              <button type="submit">
-                Submit
-              </button>
-            </div>
-          </Form>
-        </Formik>
+            />
+          </InputContainer>
+          <FormControlLabel
+            control={<Checkbox checked={formik.values.isSeller} />}
+            label="Register as a seller"
+            name='isSeller'
+            onChange={formik.handleChange}
+          />
+          <SubmitButton color="primary" variant="contained" type="submit">
+            Submit
+          </SubmitButton>
+        </Form>
       </Wrapper>
     </Container>
-  );
+  )
 };
 
 export default Register
