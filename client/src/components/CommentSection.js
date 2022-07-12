@@ -41,14 +41,12 @@ const Text = styled.div`
 `
 const CommentSection = ({ comments }) => {
 
-
-
     return (
         <Container>
             {
                 comments && comments.map(comment => {
                     return (
-                        <Comment>
+                        <Comment key={comment._id}>
                             <UserName>{comment.user}</UserName>
                             <StarsContainer>
                                 {[...Array(5)].map((star, index) => {
@@ -73,4 +71,4 @@ const CommentSection = ({ comments }) => {
     )
 }
 
-export default CommentSection
+export default React.memo(CommentSection)

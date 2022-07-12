@@ -59,4 +59,4 @@ const RatingForm = () => {
   )
 }
 
-export default RatingForm
+export default React.memo(RatingForm)

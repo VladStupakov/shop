@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import ProductsList from '../components/ProductsList'
-import ProductFilters from '../components/ProductFilters'
+import ProductsList from '../components/Products/ProductsList'
+import ProductFilters from '../components/Products/ProductFilters'
 import { fetchProducts } from '../API/ProductApi'
 
 const Container = styled.div`

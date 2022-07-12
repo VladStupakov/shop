@@ -1,8 +1,8 @@
 import React from 'react'
 import { BrowserRouter  } from "react-router-dom";
-import Navbar from './components/Navbar.js'
+import Navbar from './components/Layout/Navbar'
 import AppRouter from './components/AppRouter';
-import Footer from './components/Footer.js';
+import Footer from './components/Layout/Footer';
 
 const App = () => {
   return (

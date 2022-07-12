@@ -9,6 +9,8 @@ import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 
 const Container = styled.div`
     display: flex;
+    border-top: 1px solid lightgray;
+    background-color: #f7f7f7;
 `
 
 const Left = styled.div`
@@ -95,13 +97,13 @@ const Footer = () => {
             <Right>
                 <Title>Contacts</Title>
                 <ContactItem>
-                    <LocationOnOutlinedIcon style={{marginRight:"10px"}}/>Zhytomyr, Korolenko st.
+                    <LocationOnOutlinedIcon style={{ marginRight: "10px" }} />Zhytomyr, Korolenko st.
                 </ContactItem>
                 <ContactItem>
-                    <PhoneIphoneOutlinedIcon style={{marginRight:"10px"}}/>+38 098 123 45 67
+                    <PhoneIphoneOutlinedIcon style={{ marginRight: "10px" }} />+38 098 123 45 67
                 </ContactItem>
                 <ContactItem>
-                    <EmailOutlinedIcon style={{marginRight:"10px"}}/>stupakov41@gmail.com
+                    <EmailOutlinedIcon style={{ marginRight: "10px" }} />stupakov41@gmail.com
                 </ContactItem>
                 <ImageContainer>
                     <Payment src="https://i.ibb.co/Qfvn4z6/payment.png"></Payment>

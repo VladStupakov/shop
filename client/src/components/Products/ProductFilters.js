@@ -1,7 +1,7 @@
 import { Checkbox, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { fetchBrands, fetchCategories } from '../API/ProductApi'
+import { fetchBrands, fetchCategories } from '../../API/ProductApi'
 
 const Container = styled.div`
     display: flex;

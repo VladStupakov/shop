@@ -10,7 +10,7 @@ export default function(role) {
             if (!token) {
                  return res.status(401).json({message: "Not authorized"})
             }
-            const decoded = jwt.verify(token, process.env.JWT_REFRESH_KEY)
+            const decoded = jwt.verify(token, process.env.JWT_ACCESS_KEY)
             if (decoded.role !== role) {
                 return res.status(403).json({message: "Fobidden"})
             }

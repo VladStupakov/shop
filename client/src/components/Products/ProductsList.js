@@ -4,7 +4,6 @@ import styled from 'styled-components'
 import ProductItem from './ProductItem'
 
 const Container = styled.div`
-    padding: 20px;
     display: flex;  
     flex: 4;
     flex-direction: column;
@@ -32,7 +31,6 @@ const ProductsContainer = styled.div`
     display: flex;
     flex-wrap: wrap;    
     flex-direction: row;
-    margin-top: 10px;
 `
 
 

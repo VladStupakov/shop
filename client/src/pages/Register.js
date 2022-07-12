@@ -6,7 +6,6 @@ import { Button, Checkbox, FormControlLabel, IconButton, InputAdornment, TextFie
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const Container = styled.div`
-  margin-top: 50px;
   height: 95vh;
   background: linear-gradient(
       rgba(255, 255, 255, 0.5),

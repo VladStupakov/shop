@@ -4,15 +4,16 @@ import { useEffect, useState } from "react";
 import { loginSchema } from "../schemas/validationSchemas";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Button, IconButton, InputAdornment, TextField } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { login } from "../API/UserApi";
 
 const Container = styled.div`
-  margin-top: 50px;
   height: 95vh;
   background: linear-gradient(
       rgba(255, 255, 255, 0.5),
       rgba(255, 255, 255, 0.5)
     ),
-    url("https://www.gamingscan.com/wp-content/uploads/2020/10/pc-component-compatibility.jpg")
+    url("https://www.gamespot.com/a/uploads/screen_kubrick/1551/15511094/3667472-gaming-pc-build-2020--how-to-build-a-gaming-pc-from-scratch-promothumb2.jpg")
       center;
   display: flex;
   align-items: center;
@@ -58,9 +59,10 @@ const initialValues = {
 const Login = () => {
 
     const [showPassword, setShowPassword] = useState(false)
+    const dispatch = useDispatch()
 
-    const formSubmit = (values) => {
-      console.log(values);
+    const formSubmit = (user) => {
+      login(dispatch, user)
     }
   
     const formik = useFormik({

@@ -1,13 +1,12 @@
 import ApiError from "../error/ApiError.js"
 import Basket from "../models/Basket.js"
-import mongoose from "mongoose"
-import Product from "../models/Product.js"
+
 
 class BasketController {
     async get(req, res, next) {
         const { id } = req.params
-        const basket = await Basket.findById(id).populate('products.productId')
-        return res.json({ basket })
+        const basket = await Basket.findOne({user: id}).populate('products.productId')
+        return res.json( basket )
     }
 
     async addProduct(req, res) {

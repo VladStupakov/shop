@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Add, Remove } from '@mui/icons-material/'
 import { useLocation } from "react-router-dom";
-import { fetchOneProduct } from '../API/ProductApi';
+import { createBrand, fetchOneProduct } from '../API/ProductApi';
 import RatingForm from '../components/RatingForm';
 import CommentSection from '../components/CommentSection';
 
@@ -87,22 +87,21 @@ const Product = () => {
   const [product, setProduct] = useState({})
   const [quantity, setQuantity] = useState(1);
 
-
   useEffect(() => {
     fetchOneProduct(id)
       .then(product => setProduct(product))
   }, [id])
 
   const handleQuantityChange = (operation) => {
-    if (operation === "dec") {
-      quantity > 1 && setQuantity(quantity - 1);
-    } else {
-      setQuantity(quantity + 1);
-    }
+    operation === 'dec' ? quantity > 1 && setQuantity(quantity - 1) : setQuantity(quantity + 1)
   };
 
   const handleQuantitySet = (event) => {
     setQuantity(Number(event.target.value))
+  }
+
+  const handleAddToCart = () => {
+    createBrand({name: 'brand 5', country: 'USA'})
   }
 
   return (
@@ -122,7 +121,7 @@ const Product = () => {
               <Amount value={quantity} onChange={handleQuantitySet} />
               <Add onClick={() => handleQuantityChange("inc")} sx={{ cursor: 'pointer' }} />
             </AmountContainer>
-            <Button >ADD TO CART</Button>
+            <Button onClick={handleAddToCart}>ADD TO CART</Button>
           </AddContainer>
           <RatingForm />
         </InfoContainer>

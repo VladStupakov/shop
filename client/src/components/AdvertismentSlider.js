@@ -5,7 +5,6 @@ import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOu
 import { useState } from 'react';
 
 const Container = styled.div`
-  margin-top: 50px;
   width: 100%;
   height: 80vh;
   display: flex;

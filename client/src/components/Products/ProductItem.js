@@ -61,7 +61,7 @@ const Icon = styled.div`
     justify-content: center;
     margin: 10px;
     &:hover{
-        transform: scale(1.1);
+        background-color: rgb(156, 39, 176)
     }
 `
 
@@ -103,7 +103,7 @@ const ProductItem = ({ product }) => {
         <Container to={`/product/${product._id}`}>
             <Image src={process.env.REACT_APP_API_URL + product.img} />
             <IconContainer>
-                <Icon onClick={handleAddToFavouritesClick}>
+                <Icon onClick={handleAddToFavouritesClick} >
                     <FavoriteBorderIcon />
                 </Icon>
                 <Icon onClick={handleAddToCartClick}>
