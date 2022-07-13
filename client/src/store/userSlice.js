@@ -14,7 +14,7 @@ const userSlice = createSlice({
     loginSuccess: (state, action) => {
       state.isFetching = false
       state.currentUser = action.payload
-      localStorage.setItem("token", action.payload.accessToken)
+      localStorage.setItem("accessToken", action.payload.accessToken)
     },
     loginFail: (state) => {
       state.isFetching = false
@@ -22,10 +22,21 @@ const userSlice = createSlice({
     },
     logout: (state) => {
         state.currentUser = null
-        localStorage.removeItem('token')
+        localStorage.removeItem('accessToken')
     },
+    checkStart: (state) =>{
+      state.isFetching = true
+    },
+    checkFail: (state) =>{
+      state.isFetching = false
+      localStorage.removeItem('accessToken')
+    },
+    checkSuccess: (state, action) =>{
+      state.isFetching = false
+      localStorage.setItem("accessToken", action.payload.accessToken)
+    }
   },
 });
 
-export const { loginStart, loginSuccess, loginFail, logout } = userSlice.actions;
+export const { loginStart, loginSuccess, loginFail, logout, checkStart, checkSuccess, checkFail } = userSlice.actions;
 export default userSlice.reducer;

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Add, Remove } from '@mui/icons-material/'
 import { useLocation } from "react-router-dom";
-import { createBrand, fetchOneProduct } from '../API/ProductApi';
+import {  fetchOneProduct } from '../API/ProductApi';
 import RatingForm from '../components/RatingForm';
 import CommentSection from '../components/CommentSection';
 
@@ -101,7 +101,7 @@ const Product = () => {
   }
 
   const handleAddToCart = () => {
-    createBrand({name: 'brand 5', country: 'USA'})
+    
   }
 
   return (

@@ -26,6 +26,20 @@ class TokenService {
         return token
     }
 
+    validateRefreshToken(token){
+        try {
+            const userData = jwt.verify(token, process.env.JWT_REFRESH_KEY)
+            return userData
+        } catch (error) {
+            return null
+        }
+    }
+
+    async findToken(refreshToken) {
+        const token = await Token.findOne({ refreshToken })
+        return token
+    }
+
 }
 
 export default new TokenService()

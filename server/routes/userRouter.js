@@ -7,5 +7,6 @@ router.post('/login', userController.login)
 router.put('/:id', userController.update)
 router.post('/logout', userController.logout)
 router.get('/verify/:link', userController.verifyUser)
+router.get('/refresh', userController.refresh)
 
 export default router

@@ -1,11 +1,12 @@
 import styled from "styled-components"
 import { useFormik } from "formik";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { loginSchema } from "../schemas/validationSchemas";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Button, IconButton, InputAdornment, TextField } from "@mui/material";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { login } from "../API/UserApi";
+import { Navigate } from "react-router-dom";
 
 const Container = styled.div`
   height: 95vh;
@@ -58,75 +59,81 @@ const initialValues = {
 
 const Login = () => {
 
-    const [showPassword, setShowPassword] = useState(false)
-    const dispatch = useDispatch()
+  const [showPassword, setShowPassword] = useState(false)
+  const dispatch = useDispatch()
 
-    const formSubmit = (user) => {
-      login(dispatch, user)
-    }
-  
-    const formik = useFormik({
-      initialValues,
-      validationSchema: loginSchema,
-      onSubmit: formSubmit
-    });
-  
-    const handleClickShowPassword = () =>{
-      setShowPassword(prevState => !prevState)
-    }
-  
-    return (
-      <Container>
-        <Wrapper>
-          <FormTitle>
-            Login
-          </FormTitle>
-          <Form onSubmit={formik.handleSubmit}>
-            <InputContainer>
-              <Input
-                id="email"
-                name="email"
-                label="Email"
-                value={formik.values.email}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.email && Boolean(formik.errors.email)}
-                helperText={formik.touched.email && formik.errors.email}
-                autoComplete="off"
-              />
-            </InputContainer>
-            <InputContainer>
-              <Input
-                id="password"
-                name="password"
-                label="Password"
-                type={showPassword ? 'text' : 'password'}
-                value={formik.values.password}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.password && Boolean(formik.errors.password)}
-                helperText={formik.touched.password && formik.errors.password}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position='end'>
-                      <IconButton
-                        aria-label='toggle password visibility'
-                        onClick={handleClickShowPassword}
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </InputContainer>
-            <SubmitButton color="primary" variant="contained" type="submit">
-              Submit
-            </SubmitButton>
-          </Form>
-        </Wrapper>
-      </Container>
-    );
+  const user = useSelector((state) => state.user.currentUser)
+
+
+  const formSubmit = (user) => {
+    login(dispatch, user)
+  }
+
+  const formik = useFormik({
+    initialValues,
+    validationSchema: loginSchema,
+    onSubmit: formSubmit
+  });
+
+  const handleClickShowPassword = () => {
+    setShowPassword(prevState => !prevState)
+  }
+
+  return (
+    !user?
+    <Container>
+      <Wrapper >
+        <FormTitle>
+          Login
+        </FormTitle>
+        <Form onSubmit={formik.handleSubmit}>
+          <InputContainer>
+            <Input
+              id="email"
+              name="email"
+              label="Email"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.email && Boolean(formik.errors.email)}
+              helperText={formik.touched.email && formik.errors.email}
+              autoComplete="off"
+            />
+          </InputContainer>
+          <InputContainer>
+            <Input
+              id="password"
+              name="password"
+              label="Password"
+              type={showPassword ? 'text' : 'password'}
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.password && Boolean(formik.errors.password)}
+              helperText={formik.touched.password && formik.errors.password}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position='end'>
+                    <IconButton
+                      aria-label='toggle password visibility'
+                      onClick={handleClickShowPassword}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </InputContainer>
+          <SubmitButton color="primary" variant="contained" type="submit">
+            Submit
+          </SubmitButton>
+        </Form>
+      </Wrapper>
+    </Container>
+    :
+    <Navigate to='/products'/>
+  )
 }
 
 export default Login

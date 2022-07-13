@@ -76,9 +76,9 @@ const SearchInput = styled(InputBase)`
 
 const Navbar = () => {
 
-    const [language, setLanguage] = useState('');
+    const [language, setLanguage] = useState('')
     const [searchQuery, setSearchQuery] = useState()
-    const user = useSelector((state) => state.user.currentUser);
+    const user = useSelector((state) => state.user.currentUser)
     const dispatch = useDispatch()
 
     const handleLanguageChange = (e) => {

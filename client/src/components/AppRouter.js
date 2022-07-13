@@ -1,22 +1,26 @@
 import React from 'react'
-import { Route, Routes } from 'react-router-dom'
-import Cart from '../pages/Cart.js'
-import Home from '../pages/Home.js'
-import Login from '../pages/Login.js'
-import Product from '../pages/Product.js'
-import Products from '../pages/Products.js'
-import Register from '../pages/Register.js'
+import { Route, Routes, Navigate } from 'react-router-dom'
+import { authRoutes, publicRoutes } from "../routes";
+import { useSelector } from 'react-redux';
+import { HOME_PAGE_ROUTE } from '../utils/consts';
 
 
 const AppRouter = () => {
+
+    const user = useSelector((state) => state.user.currentUser)
+
     return (
         <Routes>
-            <Route exact path="/" element={<Home />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/product/:id" element={<Product />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/cart" element={<Cart />} />
+            {user && authRoutes.map(({ path, Component }) =>
+                <Route key={path} path={path} element={Component} exact />
+            )}
+            {publicRoutes.map(({ path, Component }) =>
+                <Route key={path} path={path} element={Component} exact />
+            )}
+            <Route
+                path="*"
+                element={<Navigate to={HOME_PAGE_ROUTE} replace />}
+            />
         </Routes>
     )
 }

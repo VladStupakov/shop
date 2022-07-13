@@ -34,16 +34,11 @@ class UserController {
         //PORT problems
         //await mailService.sendVarificationEmail(email, `${process.env.SERVER_URL}/user/varify/${varificationLink}`)
 
-        const { tokens, userDto } = await generateTokens(user)
+        //const { tokens, userDto } = await generateTokens(user)
 
         const basket = await Basket.create({ user: user._id })
 
-        res.cookie('refreshToken', tokens.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
-
-        return res.json({
-            ...tokens,
-            user: userDto
-        })
+        return res.json(user)
     }
 
     async login(req, res, next) {
@@ -80,7 +75,6 @@ class UserController {
     async logout(req, res, next) {
         const { refreshToken } = req.cookies
         const token = await tokenService.removeToken(refreshToken)
-        res.clearCookie('refreshToken')
         return res.json(token)
     }
 
@@ -92,6 +86,22 @@ class UserController {
         res.redirect(process.env.CLIENT_URL)
     }
 
+    async refresh(req, res, next) {
+        const { refreshToken } = req.cookies
+        if (!refreshToken)
+            return res.json({ error: 'Unautorized' })
+        const userData = tokenService.validateRefreshToken(refreshToken)
+        const tokenFromDb = await tokenService.findToken(refreshToken)
+        if (!userData || !tokenFromDb)
+            return res.json({ error: 'Unautorized' })
+        const user = await User.findById(userData.id)
+        const { tokens, userDto } = await generateTokens(user)
+        res.cookie('refreshToken', tokens.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
+        return res.json({
+            ...tokens,
+            user: userDto
+        })
+    }
 
 }
 
