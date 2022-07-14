@@ -1,7 +1,9 @@
 import { Checkbox, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
 import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import styled, { css } from 'styled-components'
-import { fetchBrands, fetchCategories } from '../../API/ProductApi'
+import { setSelectedBrands, setSelectedCategory } from '../../store/filtersSlice'
+
 
 const Container = styled.div`
     display: flex;
@@ -44,37 +46,25 @@ const CategoryItem = styled.div`
     `}
 `
 
-const ProductFilters = ({setCategory, setBr}) => {
+const ProductFilters = () => {
 
-  const [categories, setCategories] = useState()
-  const [brands, setBrands] = useState()
-  const [selectedCategory, setSelectedCategory] = useState()
-  const [selectedBrands, setSelectedBrands] = useState([])
+  let categories = useSelector(state => state.filters.categories)
+  categories = [{ _id: null, name: 'All categories' }, ...categories]
+  const brands = useSelector(state => state.filters.brands)
+  const selectedCategory = useSelector(state => state.filters.selectedCategory)
+  const selectedBrands = useSelector(state => state.filters.selectedBrands)
+  const dispatch = useDispatch()
 
-  useEffect(() => {
-    fetchCategories()
-      .then(data => setCategories([{ name: 'All categories', _id: 1 }, ...data]))
-    fetchBrands()
-      .then(data => setBrands(data))
-  }, [selectedCategory, selectedBrands])
-
-  const handleCategoryChange = (category) => {
-      setSelectedCategory(category)
-      if(category._id === 1)
-        setCategory()
-      else
-      setCategory(category)
+  const handleCategoryChange = (id) => {
+    id === 1 ? dispatch(setSelectedCategory(null)):  dispatch(setSelectedCategory(id))
   }
 
-  const handleToggle = (value) => () => {
-    const currentIndex = selectedBrands.indexOf(value);
-    if (currentIndex === -1) {
-      setSelectedBrands([...selectedBrands, value])
-      setBr([...selectedBrands, value])
-    } else {
-      setSelectedBrands(selectedBrands.filter(item => item !== value));
-      setBr(selectedBrands.filter(item => item !== value))
-    }
+  const handleBrandToggle = (value) => () => {
+    const currentIndex = selectedBrands.indexOf(value)
+    currentIndex === -1 ?
+      dispatch(setSelectedBrands([...selectedBrands, value]))
+      :
+      dispatch(setSelectedBrands(selectedBrands.filter(item => item !== value)))
   };
 
 
@@ -85,37 +75,37 @@ const ProductFilters = ({setCategory, setBr}) => {
         {
           categories &&
           categories.map(category => {
-            return <CategoryItem key={category._id} onClick={() => handleCategoryChange(category)} selected={selectedCategory?._id === category._id}>{category.name}</CategoryItem>
+            return <CategoryItem key={category._id} onClick={() => handleCategoryChange(category._id)} selected={category._id  === selectedCategory || null}>{category.name}</CategoryItem>
           })
         }
       </FilterContainer>
       <FilterContainer>
-      <FilterName>Brands</FilterName>
-      <List sx={{ width: '80%' }}>
-        {brands && brands.map((brand) => {
-          const labelId = `checkbox-list-label-${brand._id}`;
-          return (
-            <ListItem
-              key={brand._id}
-              disablePadding
-              sx={{ width: '125%' }}
-            >
-              <ListItemButton role={undefined} onClick={handleToggle(brand._id)} >
-                <ListItemIcon>
-                  <Checkbox
-                    edge="start"
-                    checked={selectedBrands.indexOf(brand._id) !== -1}
-                    tabIndex={-1}
-                    disableRipple
-                    inputProps={{ 'aria-labelledby': labelId }}
-                  />
-                </ListItemIcon>
-                <ListItemText id={labelId} primary={`${brand.name}`} />
-              </ListItemButton>
-            </ListItem>
-          );
-        })}
-      </List>
+        <FilterName>Brands</FilterName>
+        <List sx={{ width: '80%' }}>
+          {brands && brands.map((brand) => {
+            const labelId = `checkbox-list-label-${brand._id}`;
+            return (
+              <ListItem
+                key={brand._id}
+                disablePadding
+                sx={{ width: '125%' }}
+              >
+                <ListItemButton role={undefined} onClick={handleBrandToggle(brand._id)} >
+                  <ListItemIcon>
+                    <Checkbox
+                      edge="start"
+                      checked={selectedBrands.indexOf(brand._id) !== -1}
+                      tabIndex={-1}
+                      disableRipple
+                      inputProps={{ 'aria-labelledby': labelId }}
+                    />
+                  </ListItemIcon>
+                  <ListItemText id={labelId} primary={`${brand.name}`} />
+                </ListItemButton>
+              </ListItem>
+            );
+          })}
+        </List>
       </FilterContainer>
     </Container>
   )

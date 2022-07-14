@@ -29,7 +29,7 @@ class ProductController {
                 },
                 {
                     '$facet': {
-                        data: [{ $skip: offset }, { $limit: limit }],
+                        data: [{ $skip: offset }, { $limit: Number(limit) }],
                         totalQuantity: [{ $count: "total" }],
                     }
                 }
@@ -46,7 +46,7 @@ class ProductController {
                 },
                 {
                     '$facet': {
-                        data: [{ $skip: offset }, { $limit: limit }],
+                        data: [{ $skip: offset }, { $limit: Number(limit) }],
                         totalQuantity: [{ $count: "total" }],
                     }
                 }
@@ -62,7 +62,7 @@ class ProductController {
                 },
                 {
                     '$facet': {
-                        data: [{ $skip: offset }, { $limit: limit }],
+                        data: [{ $skip: offset }, { $limit: Number(limit) }],
                         totalQuantity: [{ $count: "total" }],
                     }
                 }
@@ -80,7 +80,7 @@ class ProductController {
                 },
                 {
                     '$facet': {
-                        data: [{ $skip: offset }, { $limit: limit }],
+                        data: [{ $skip: offset }, { $limit: Number(limit) }],
                         totalQuantity: [{ $count: "total" }],
                     }
                 }

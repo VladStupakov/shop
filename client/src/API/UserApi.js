@@ -1,5 +1,5 @@
 import { $authHost, $host } from "./index"
-import { loginFail, loginStart, loginSuccess, logout, checkFail, checkStart, checkSuccess } from "../store/userSlice"
+import { loginFail, loginStart, loginSuccess, logout, checkFail, checkStart, checkSuccess,registrationFail,registrationSuccess } from "../store/userSlice"
 
 export const fetchCart = async (id) => {
     const { data } = await $host.get('basket/' + id)
@@ -8,19 +8,33 @@ export const fetchCart = async (id) => {
 
 
 export const login = async (dispatch, user) => {
-    dispatch(loginStart());
+    dispatch(loginStart())
     try {
         const { data } = await $host.post('user/login', user)
-        //localStorage.setItem('token', data.accessToken)
-        //return jwt_decode(data.token)
-        dispatch(loginSuccess({ ...data.user, accessToken: data.accessToken }));
+        dispatch(loginSuccess({ ...data.user, accessToken: data.accessToken }))       
     } catch (err) {
-        dispatch(loginFail());
+        dispatch(loginFail(err.response.data.message))      
+    }
+};
+
+export const register = async (dispatch, user) => {
+    dispatch(loginStart())
+    try {
+        const { data } = await $host.post('user/registration', user)
+        dispatch(registrationSuccess())
+        return new Promise((resolve, reject) => {
+            resolve()
+        })
+    } catch (err) {
+        dispatch(registrationFail(err.response.data.message))
+        return new Promise((resolve, reject) => {
+            reject()
+        })
     }
 };
 
 export const logoutRequest = async (dispatch) => {
-    dispatch(logout());
+    dispatch(logout())
     const { data } = await $authHost.post('user/logout')
     return data
 };
@@ -31,6 +45,6 @@ export const check = async(dispatch) =>{
         const { data } = await $host.get('user/refresh')
         dispatch(checkSuccess({accessToken: data.accessToken }))
     } catch (err) {
-        dispatch(checkFail());
+        dispatch(checkFail())
     }
 }

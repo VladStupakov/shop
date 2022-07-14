@@ -1,12 +1,13 @@
 import styled from "styled-components"
 import { useFormik } from "formik";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { loginSchema } from "../schemas/validationSchemas";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Button, IconButton, InputAdornment, TextField } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../API/UserApi";
 import { Navigate } from "react-router-dom";
+import { refreshError } from "../store/userSlice";
 
 const Container = styled.div`
   height: 95vh;
@@ -52,6 +53,11 @@ const SubmitButton = styled(Button)`
 
 `
 
+const LoginError = styled.div`
+  margin-top: 10px;
+  color: red;
+`
+
 const initialValues = {
   email: "",
   password: "",
@@ -61,9 +67,8 @@ const Login = () => {
 
   const [showPassword, setShowPassword] = useState(false)
   const dispatch = useDispatch()
-
-  const user = useSelector((state) => state.user.currentUser)
-
+  const user = useSelector(state => state.user.currentUser)
+  const error = useSelector(state => state.user.error)
 
   const formSubmit = (user) => {
     login(dispatch, user)
@@ -78,6 +83,12 @@ const Login = () => {
   const handleClickShowPassword = () => {
     setShowPassword(prevState => !prevState)
   }
+
+  useEffect(() => {
+    if(error)
+    dispatch(refreshError())
+  }, [])
+  
 
   return (
     !user?
@@ -129,6 +140,7 @@ const Login = () => {
             Submit
           </SubmitButton>
         </Form>
+        <LoginError>{error}</LoginError>
       </Wrapper>
     </Container>
     :

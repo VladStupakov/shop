@@ -9,8 +9,8 @@ class CategoryController {
     }
 
     async getAll(req, res) {
-        const data = await Category.find()
-        return res.json(data)
+        const categories = await Category.find()
+        return res.json(categories)
     }
 
     async getOne(req, res) {

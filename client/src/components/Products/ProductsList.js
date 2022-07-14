@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
+import { useSelector } from 'react-redux'
 import styled from 'styled-components'
+import { fetchProducts } from '../../API/ProductApi'
 import ProductItem from './ProductItem'
 
 const Container = styled.div`
@@ -34,16 +36,31 @@ const ProductsContainer = styled.div`
 `
 
 
-const ProductsList = ({ products }) => {
+const ProductsList = () => {
+
+    const [products, setProducts] = useState()
+    const selectedCategory = useSelector(state => state.filters.selectedCategory)
+    const selectedBrands = useSelector(state => state.filters.selectedBrands)
+    let selectedSort = useSelector(state => state.filters.selectedSort)
+    let fetchLimit = useSelector(state => state.filters.fetchLimit)
+
+    useEffect(() => {
+        fetchProducts(selectedBrands, selectedCategory, 1, fetchLimit)
+            .then(products => setProducts(products.data))
+    }, [selectedBrands, selectedCategory, selectedSort, fetchLimit])
+
+    const handleSortChange = (e) =>{
+        console.log(e.target.value)
+    }
 
     return (
         <Container>
             <SortContainer>
                 <SortLabel>Sort by</SortLabel>
-                <SortSelect>
+                <SortSelect defaultValue="New" onChange={handleSortChange}>
                     <option>Price (desc)</option>
                     <option>Price (asc)</option>
-                    <option selected>New </option>
+                    <option >New </option>
                 </SortSelect>
             </SortContainer>
             <ProductsContainer>

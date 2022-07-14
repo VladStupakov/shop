@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import styled from "styled-components";
 import { fetchCategories } from "../API/ProductApi";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedCategory } from "../store/filtersSlice";
 
 const Container = styled.div`
   display: flex;
@@ -77,19 +79,19 @@ const Button = styled.button`
 
 const HomePageCategories = () => {
 
-    const [categories, setCategories] = useState()
+    const categories = useSelector(state => state.filters.categories)
+    const dispatch = useDispatch()
 
-    useEffect(() => {
-        fetchCategories()
-            .then(data => setCategories(data))
-    }, [])
+    const handleCategoryClick = (id) =>{
+        dispatch(setSelectedCategory(id))
+    }
 
     return (
         <Container>
             {categories ?
                 categories.map(category => {
                     return (
-                        <ItemContainer to="/products" key={category._id}>
+                        <ItemContainer to="/products" key={category._id} onClick={() => handleCategoryClick(category._id)}>
                             <Title>{category.name}</Title>
                             <ImageContainer>
                                 <Image src={process.env.REACT_APP_API_URL + category.img} ></Image>

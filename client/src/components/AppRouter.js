@@ -2,7 +2,7 @@ import React from 'react'
 import { Route, Routes, Navigate } from 'react-router-dom'
 import { authRoutes, publicRoutes } from "../routes";
 import { useSelector } from 'react-redux';
-import { HOME_PAGE_ROUTE } from '../utils/consts';
+import { PRODUCTS_LIST_ROUTE } from '../utils/consts';
 
 
 const AppRouter = () => {
@@ -19,7 +19,7 @@ const AppRouter = () => {
             )}
             <Route
                 path="*"
-                element={<Navigate to={HOME_PAGE_ROUTE} replace />}
+                element={<Navigate to={PRODUCTS_LIST_ROUTE} replace />}
             />
         </Routes>
     )
