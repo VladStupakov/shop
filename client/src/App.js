@@ -6,6 +6,7 @@ import Footer from './components/Layout/Footer';
 import { check } from './API/UserApi';
 import { useDispatch } from 'react-redux';
 import { fetchFilters } from './API/ProductApi';
+import { resetFilterValues } from './store/filtersSlice';
 
 const App = () => {
 
@@ -16,7 +17,8 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    fetchFilters(dispatch)    
+    dispatch(resetFilterValues())   
+    fetchFilters(dispatch) 
   }, [])
   
 

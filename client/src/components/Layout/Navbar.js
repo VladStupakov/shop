@@ -79,6 +79,7 @@ const Navbar = () => {
     const [language, setLanguage] = useState('')
     const [searchQuery, setSearchQuery] = useState()
     const user = useSelector((state) => state.user.currentUser)
+    const cartProductsCount = useSelector((state) => state.cart.products.length)
     const dispatch = useDispatch()
 
     const handleLanguageChange = (e) => {
@@ -93,7 +94,7 @@ const Navbar = () => {
         setSearchQuery(e.target.value)
     }
 
-    const handleLogoutClick = () =>{
+    const handleLogoutClick = () => {
         logoutRequest(dispatch)
     }
 
@@ -141,9 +142,14 @@ const Navbar = () => {
                         <>
                             <CustomLink to='/cart'>
                                 <ButtonListItem>
-                                    <Badge badgeContent={3} color="secondary" sx={{ cursor: "pointer" }}>
-                                        <ShoppingCartOutlinedIcon color="primary" sx={{ border: '2px solid rgb(25, 118, 210)', borderRadius: '10px' }} />
-                                    </Badge>
+                                    {
+                                        cartProductsCount !== 0 ?
+                                            <Badge badgeContent={cartProductsCount === 0 ? '' : cartProductsCount} color="secondary" sx={{ cursor: "pointer" }}>
+                                                <ShoppingCartOutlinedIcon color="primary" sx={{ border: '2px solid rgb(25, 118, 210)', borderRadius: '10px' }} />
+                                            </Badge>
+                                            :
+                                            <ShoppingCartOutlinedIcon color="primary" sx={{ border: '2px solid rgb(25, 118, 210)', borderRadius: '10px' }} />
+                                    }
                                 </ButtonListItem>
                             </CustomLink>
                             <ButtonListItem onClick={handleLogoutClick}>

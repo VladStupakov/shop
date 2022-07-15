@@ -56,7 +56,7 @@ const ProductFilters = () => {
   const dispatch = useDispatch()
 
   const handleCategoryChange = (id) => {
-    id === 1 ? dispatch(setSelectedCategory(null)):  dispatch(setSelectedCategory(id))
+    id === 1 ? dispatch(setSelectedCategory(null)) : dispatch(setSelectedCategory(id))
   }
 
   const handleBrandToggle = (value) => () => {
@@ -67,18 +67,22 @@ const ProductFilters = () => {
       dispatch(setSelectedBrands(selectedBrands.filter(item => item !== value)))
   };
 
-
-  return (
-    <Container>
+  const CategoryFilter = React.memo(() => {
+    return (
       <FilterContainer>
         <FilterName>Categories</FilterName>
         {
           categories &&
           categories.map(category => {
-            return <CategoryItem key={category._id} onClick={() => handleCategoryChange(category._id)} selected={category._id  === selectedCategory || null}>{category.name}</CategoryItem>
+            return <CategoryItem key={category._id} onClick={() => handleCategoryChange(category._id)} selected={category._id === selectedCategory || null}>{category.name}</CategoryItem>
           })
         }
       </FilterContainer>
+    )
+  })
+
+  const BrandFilter = React.memo(() => {
+    return (
       <FilterContainer>
         <FilterName>Brands</FilterName>
         <List sx={{ width: '80%' }}>
@@ -106,7 +110,13 @@ const ProductFilters = () => {
             );
           })}
         </List>
-      </FilterContainer>
+      </FilterContainer>)
+  })
+
+  return (
+    <Container>
+      <CategoryFilter />
+      <BrandFilter />
     </Container>
   )
 }

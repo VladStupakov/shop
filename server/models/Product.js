@@ -54,10 +54,11 @@ const productShema = new mongoose.Schema({
             reviewSchema
         }
     ],
-    totalRating:{
+    totalRating: {
         type: Number
     }
-});
+},
+    { timestamps: true });
 
 const Product = mongoose.model('Product', productShema)
 

@@ -18,10 +18,10 @@ export const fetchCategories = async () => {
     return data
 }
 
-export const fetchProducts = async (brands, categoryId, page, limit) => {
+export const fetchProducts = async (brands, categoryId, page, limit, sorting) => {
     const { data } = await $host.get('product', {
         params: {
-            brands, categoryId, page, limit
+            brands, categoryId, page, limit, sorting
         }
     })
     return data

@@ -1,8 +1,12 @@
 import React from 'react'
 import styled from 'styled-components'
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCart';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
+import { addProduct, removeProduct } from '../../store/cartSlice';
+import { useEffect } from 'react';
 
 const IconContainer = styled.div`
     opacity: 0;
@@ -61,7 +65,7 @@ const Icon = styled.div`
     justify-content: center;
     margin: 10px;
     &:hover{
-        background-color: rgb(156, 39, 176)
+        background-color: rgb(25, 118, 210)
     }
 `
 
@@ -90,25 +94,46 @@ const ProductName = styled.div`
 
 const ProductItem = ({ product }) => {
 
+    const user = useSelector((state) => state.user.currentUser)
+    const cartProducts = useSelector((state) => state.cart.products)
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
 
-    const handleAddToFavouritesClick = (event) =>{
+    const isInCart = cartProducts.findIndex(p => p.id === product._id)
+
+    const handleRemoveFromCart = (event) => {
         event.preventDefault()
+        user ?
+            dispatch(removeProduct(product._id))
+            :
+            navigate('/login')
     }
 
-    const handleAddToCartClick = (event) =>{
+    const handleAddToCartClick = (event) => {
         event.preventDefault()
+        user ?
+            dispatch(addProduct({ id: product._id, name: product.name, quantity: 1, price: product.price }))
+            :
+            navigate('/login')
     }
 
     return (
         <Container to={`/product/${product._id}`}>
             <Image src={process.env.REACT_APP_API_URL + product.img} />
             <IconContainer>
-                <Icon onClick={handleAddToFavouritesClick} >
+                <Icon >
                     <FavoriteBorderIcon />
                 </Icon>
-                <Icon onClick={handleAddToCartClick}>
-                    <AddShoppingCartIcon />
-                </Icon>
+                {
+                    isInCart === -1 ?
+                        <Icon onClick={handleAddToCartClick}>
+                            <AddShoppingCartIcon />
+                        </Icon>
+                        :
+                        <Icon onClick={handleRemoveFromCart}>
+                            <RemoveShoppingCartIcon />
+                        </Icon>
+                }
             </IconContainer>
             <Info>
                 <Price>{product.price} UAH</Price>

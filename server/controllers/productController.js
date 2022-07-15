@@ -15,17 +15,32 @@ class ProductController {
     }
 
     async getAll(req, res) {
-        let { brands, categoryId, limit, page } = req.query
+        let { brands, categoryId, limit, page, sorting } = req.query
         page = page || 1
         limit = limit || 100
         let offset = page * limit - limit
-        let products;
+        let products
+        let sort = {}
+        switch (sorting) {
+            case 'New':
+                sort = { createdAt: -1 }
+                break
+            case 'Price (asc)':
+                sort = { price: 1}
+                break
+            case 'Price (desc)' :
+                sort = {price: -1}
+                break
+        }
         if (!brands && !categoryId) {
             products = await Product.aggregate([
                 {
                     $match: {
                         quantity: { $ne: 0 }
                     }
+                },
+                {
+                    $sort: sort
                 },
                 {
                     '$facet': {
@@ -36,13 +51,16 @@ class ProductController {
             ])
         }
         if (brands && !categoryId) {
-            const b = brands.map(br => {return mongoose.Types.ObjectId(br)})
+            const b = brands.map(br => { return mongoose.Types.ObjectId(br) })
             products = await Product.aggregate([
                 {
                     $match: {
-                        brand: { $in: b } ,
+                        brand: { $in: b },
                         quantity: { $ne: 0 }
                     }
+                },
+                {
+                    $sort: sort
                 },
                 {
                     '$facet': {
@@ -61,6 +79,9 @@ class ProductController {
                     }
                 },
                 {
+                    $sort: sort
+                },
+                {
                     '$facet': {
                         data: [{ $skip: offset }, { $limit: Number(limit) }],
                         totalQuantity: [{ $count: "total" }],
@@ -69,14 +90,17 @@ class ProductController {
             ])
         }
         if (brands && categoryId) {
-            const b = brands.map(br => {return mongoose.Types.ObjectId(br)})
+            const b = brands.map(br => { return mongoose.Types.ObjectId(br) })
             products = await Product.aggregate([
                 {
                     $match: {
                         categories: mongoose.Types.ObjectId(categoryId),
-                        brand: { $in: b } ,
+                        brand: { $in: b },
                         quantity: { $ne: 0 }
                     }
+                },
+                {
+                    $sort: sort
                 },
                 {
                     '$facet': {

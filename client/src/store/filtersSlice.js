@@ -1,17 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const filtersSlice = createSlice({
-    name: "filters",
-    initialState: {
-        isFetching: false,
+const initState = {
+    isFetching: false,
         categories: null,
         brands: null,
         selectedCategory: 1,
         selectedBrands: [],
-        selectedSort: 'new',
+        selectedSort: 'New',
         pageNumber: 1,
         fetchLimit: 10,
         error: false
+}
+
+const filtersSlice = createSlice({
+    name: "filters",
+    initialState: {
+        ...initState
     },
     reducers: {
         dataFetchStart: (state) => {
@@ -31,9 +35,21 @@ const filtersSlice = createSlice({
         },
         setSelectedBrands: (state, action) =>{
             state.selectedBrands = action.payload
+        },
+        setSelectedSort: (state, action) =>{
+            state.selectedSort = action.payload
+        },
+        setFetchLimit: (state, action) =>{
+            state.fetchLimit = action.payload
+        },
+        setPageNumber: (state, action) =>{
+            state.pageNumber = action.payload
+        },
+        resetFilterValues: (state) =>{           
+           
         }
     },
 });
 
-export const { dataFetchFail, dataFetchStart, dataFetchSuccess, setSelectedCategory,setSelectedBrands } = filtersSlice.actions;
+export const { dataFetchFail, dataFetchStart, dataFetchSuccess, setSelectedCategory,setSelectedBrands, setSelectedSort, setFetchLimit, setPageNumber, resetFilterValues } = filtersSlice.actions;
 export default filtersSlice.reducer;
