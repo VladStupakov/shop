@@ -1,11 +1,6 @@
 import { $authHost, $host } from "./index"
 import { loginFail, loginStart, loginSuccess, logout, checkFail, checkStart, checkSuccess,registrationFail,registrationSuccess } from "../store/userSlice"
 
-export const fetchCart = async (id) => {
-    const { data } = await $host.get('basket/' + id)
-    return data
-}
-
 
 export const login = async (dispatch, user) => {
     dispatch(loginStart())
@@ -42,7 +37,7 @@ export const logoutRequest = async (dispatch) => {
 export const check = async(dispatch) =>{
     dispatch(checkStart())
     try {
-        const { data } = await $host.get('user/refresh')
+        const { data } = await $authHost.get('user/refresh')
         dispatch(checkSuccess({accessToken: data.accessToken }))
     } catch (err) {
         dispatch(checkFail())

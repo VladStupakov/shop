@@ -26,10 +26,10 @@ class ProductController {
                 sort = { createdAt: -1 }
                 break
             case 'Price (asc)':
-                sort = { price: 1}
+                sort = { price: 1 }
                 break
-            case 'Price (desc)' :
-                sort = {price: -1}
+            case 'Price (desc)':
+                sort = { price: -1 }
                 break
         }
         if (!brands && !categoryId) {
@@ -38,6 +38,9 @@ class ProductController {
                     $match: {
                         quantity: { $ne: 0 }
                     }
+                },
+                {
+                    $unset: ["reviews", "brand", "categories"]
                 },
                 {
                     $sort: sort
@@ -60,6 +63,9 @@ class ProductController {
                     }
                 },
                 {
+                    $unset: ["reviews", "brand", "categories"]
+                },
+                {
                     $sort: sort
                 },
                 {
@@ -77,6 +83,9 @@ class ProductController {
                         categories: mongoose.Types.ObjectId(categoryId),
                         quantity: { $ne: 0 }
                     }
+                },
+                {
+                    $unset: ["reviews", "brand", "categories"]
                 },
                 {
                     $sort: sort
@@ -98,6 +107,9 @@ class ProductController {
                         brand: { $in: b },
                         quantity: { $ne: 0 }
                     }
+                },
+                {
+                    $unset: ["reviews", "brand", "categories"]
                 },
                 {
                     $sort: sort

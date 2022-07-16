@@ -1,8 +1,9 @@
 import { Add, Remove } from '@mui/icons-material';
 import React, { useEffect } from 'react'
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { fetchCart } from '../API/UserApi';
+
 
 const Container = styled.div`
     padding: 20px;
@@ -50,6 +51,8 @@ const Info = styled.div`
 const Product = styled.div`
   display: flex;
   justify-content: space-between;
+  padding: 20px;
+  border-bottom: 1px solid lightgrey;
 `;
 
 const ProductDetail = styled.div`
@@ -94,11 +97,6 @@ const ProductPrice = styled.div`
   font-weight: 200;
 `;
 
-const Hr = styled.hr`
-  background-color: #eee;
-  border: none;
-  height: 1px;
-`;
 
 const Summary = styled.div`
   flex: 1;
@@ -133,14 +131,7 @@ const Button = styled.button`
 `;
 const Cart = () => {
 
-    const [cart, setCart] = useState({})
-
-    useEffect(() => {
-        fetchCart('62bc2cb86bb4eb9c9bbc2ef5')
-        .then(data => setCart(data))
-    }, [])
-
-    console.log(cart)
+    const cart = useSelector((state) => state.cart)
 
     return (
         <Container>
@@ -154,13 +145,13 @@ const Cart = () => {
             </Top>
             <Bottom>
                 <Info>
-                    {cart.products?.map((product) => (
-                        <Product key={product.productId._id}>
+                    {cart.products.map((product) => (
+                        <Product key={product.id}>
                             <ProductDetail>
-                                <Image src={process.env.REACT_APP_API_URL + product.productId.img} />
+                                <Image src={process.env.REACT_APP_API_URL + product.img} />
                                 <Details>
                                     <ProductName>
-                                        {product.productId.name}
+                                        {product.name}
                                     </ProductName>
                                 </Details>
                             </ProductDetail>
@@ -171,12 +162,11 @@ const Cart = () => {
                                     <Remove />
                                 </ProductAmountContainer>
                                 <ProductPrice>
-                                    $ {product.productId.price * product.basketQuantity}
+                                    $ {product.price * product.basketQuantity}
                                 </ProductPrice>
                             </PriceDetail>
                         </Product>
                     ))}
-                    <Hr />
                 </Info>
                 <Summary>
                     <SummaryTitle>ORDER SUMMARY</SummaryTitle>

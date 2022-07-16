@@ -42,9 +42,10 @@ const Text = styled.div`
 const CommentSection = ({ comments }) => {
 
     return (
+        comments?.length !== 0 &&
         <Container>
             {
-                comments && comments.map(comment => {
+                comments?.map(comment => {
                     return (
                         <Comment key={comment._id}>
                             <UserName>{comment.user}</UserName>

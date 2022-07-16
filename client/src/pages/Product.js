@@ -2,9 +2,14 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Add, Remove } from '@mui/icons-material/'
 import { useLocation } from "react-router-dom";
-import {  fetchOneProduct } from '../API/ProductApi';
+import { fetchOneProduct } from '../API/ProductApi';
 import RatingForm from '../components/RatingForm';
 import CommentSection from '../components/CommentSection';
+import { useDispatch, useSelector } from 'react-redux';
+import DoneIcon from '@mui/icons-material/Done';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { IconButton } from '@mui/material';
+import { removeFromCart } from '../API/CartApi';
 
 const Container = styled.div`
     
@@ -80,17 +85,46 @@ const Button = styled.button`
   }
 `;
 
+const InCart = styled.div`
+  margin: 20px;
+  font-size: 30px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  display: flex;
+  flex-direction: column;
+  
+`
+const InCartText = styled.div`
+  display: flex;
+  justify-content: center;
+`
+
+const RemoveFromCart = styled.div`
+  display: flex;
+  justify-content: center;
+`
 const Product = () => {
 
   const location = useLocation();
-  const id = location.pathname.split("/")[2];
+  const id = location.pathname.split("/")[2]
   const [product, setProduct] = useState({})
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(1)
+  const [isLoaded, setIsLoaded] = useState(false)
+  const cartProducts = useSelector((state) => state.cart.products)
+  const [isInCart, setIsInCart] = useState(false)
+  const dispatch = useDispatch()
+  const cartId = useSelector((state) => state.cart.id)
 
   useEffect(() => {
     fetchOneProduct(id)
       .then(product => setProduct(product))
+      .then(setIsLoaded(true))
   }, [id])
+
+  useEffect(() => {
+    if (isLoaded)
+      if (cartProducts.findIndex(p => p.id === product._id) !== -1)
+        setIsInCart(true)
+  }, [cartProducts, isLoaded])
 
   const handleQuantityChange = (operation) => {
     operation === 'dec' ? quantity > 1 && setQuantity(quantity - 1) : setQuantity(quantity + 1)
@@ -101,7 +135,12 @@ const Product = () => {
   }
 
   const handleAddToCart = () => {
-    
+
+  }
+
+  const handleRemoveFromCart = () => {
+      removeFromCart(dispatch, cartId, product._id)
+      setIsInCart(false)
   }
 
   return (
@@ -115,17 +154,36 @@ const Product = () => {
           <Title>{product.name}</Title>
           <Desc>{product.description}</Desc>
           <Price>{product.price} UAH</Price>
-          <AddContainer>
-            <AmountContainer>
-              <Remove onClick={() => handleQuantityChange("dec")} sx={{ cursor: 'pointer' }} />
-              <Amount value={quantity} onChange={handleQuantitySet} />
-              <Add onClick={() => handleQuantityChange("inc")} sx={{ cursor: 'pointer' }} />
-            </AmountContainer>
-            <Button onClick={handleAddToCart}>ADD TO CART</Button>
-          </AddContainer>
+          {
+            !isInCart ?
+              <AddContainer>
+                <AmountContainer>
+                  <Remove onClick={() => handleQuantityChange("dec")} sx={{ cursor: 'pointer' }} />
+                  <Amount value={quantity} onChange={handleQuantitySet} />
+                  <Add onClick={() => handleQuantityChange("inc")} sx={{ cursor: 'pointer' }} />
+                </AmountContainer>
+                <Button onClick={handleAddToCart}>ADD TO CART</Button>
+              </AddContainer>
+              :
+              <InCart>
+                <InCartText>
+                  <DoneIcon color='success' />
+                  Added to cart
+                  <DoneIcon color='success' />
+                </InCartText>
+                <RemoveFromCart>
+                  Remove
+                  <IconButton onClick={handleRemoveFromCart}>
+                    <DeleteIcon />
+                  </IconButton>
+                </RemoveFromCart>
+              </InCart>
+          }
           <RatingForm />
         </InfoContainer>
-        <CommentSection comments={product.reviews} />
+        {isLoaded &&
+          <CommentSection comments={product.reviews} />
+        }
       </Wrapper>
     </Container>
   );

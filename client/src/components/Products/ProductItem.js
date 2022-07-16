@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { addProduct, removeProduct } from '../../store/cartSlice';
 import { useEffect } from 'react';
+import { addTocart, removeFromCart } from '../../API/CartApi';
 
 const IconContainer = styled.div`
     opacity: 0;
@@ -96,6 +97,7 @@ const ProductItem = ({ product }) => {
 
     const user = useSelector((state) => state.user.currentUser)
     const cartProducts = useSelector((state) => state.cart.products)
+    const cartId = useSelector((state) => state.cart.id)
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
@@ -104,7 +106,7 @@ const ProductItem = ({ product }) => {
     const handleRemoveFromCart = (event) => {
         event.preventDefault()
         user ?
-            dispatch(removeProduct(product._id))
+            removeFromCart(dispatch, cartId, product._id)
             :
             navigate('/login')
     }
@@ -112,7 +114,7 @@ const ProductItem = ({ product }) => {
     const handleAddToCartClick = (event) => {
         event.preventDefault()
         user ?
-            dispatch(addProduct({ id: product._id, name: product.name, quantity: 1, price: product.price }))
+            addTocart(dispatch, cartId, product, 1)
             :
             navigate('/login')
     }

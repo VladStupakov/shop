@@ -5,15 +5,29 @@ import Basket from "../models/Basket.js"
 class BasketController {
     async get(req, res, next) {
         const { id } = req.params
-        const basket = await Basket.findOne({user: id}).populate('products.productId')
+        const result = await Basket.findOne({user: id}).populate('products.productId').lean()
+        const products = result.products.map(product =>{
+            return {
+                basketQuantity: product.basketQuantity,
+                id: product.productId._id,
+                name: product.productId.name,
+                img: product.productId.img,
+                description: product.productId.description,
+                price: product.productId.price
+            }
+        })
+        const basket = {
+            ...result,
+            products
+        }
         return res.json( basket )
     }
 
     async addProduct(req, res) {
         const { id } = req.params
-        const { productId } = req.body
-        const basket = await Basket.findByIdAndUpdate(id, { $addToSet: { products: { productId } } })
-        return res.json({ basket })
+        const { productId, quantity } = req.body.params
+        const basket = await Basket.findByIdAndUpdate(id, { $addToSet: { products: { productId: productId, basketQuantity: quantity } } }).populate('products.productId').lean()
+        return res.json( basket )
     }
 
     async changeProductQuantity(req, res) {
@@ -25,7 +39,7 @@ class BasketController {
 
     async deleteProduct(req, res) {
         const { id } = req.params
-        const { productId } = req.body
+        const { productId } = req.query
         const basket = await Basket.findOneAndUpdate(id, { $pull: { products: { productId } } })
         return res.json({ basket })
     }
