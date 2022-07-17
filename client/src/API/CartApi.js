@@ -1,4 +1,4 @@
-import { addProduct, removeProduct, setCart } from "../store/cartSlice";
+import { addProduct, changeProductQuantity, removeProduct, setCart } from "../store/cartSlice";
 import { $authHost } from "./index";
 
 export const fetchCart = async (dispatch, id) => {
@@ -40,6 +40,19 @@ export const removeFromCart = async (dispatch, id, productId) => {
         dispatch(removeProduct(productId))
     } catch (error) {
 
+    }
+}
+
+export const changeQuantity = async (dispatch, id, productId, quantity) =>{
+    try {
+        const { data } = await $authHost.patch('basket/' + id, {
+            params: {
+                productId, quantity
+            }
+        })
+        dispatch(changeProductQuantity({ quantity, id: productId }))
+    } catch (error) {
+        
     }
 }
 

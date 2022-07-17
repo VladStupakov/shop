@@ -1,3 +1,4 @@
+import mongoose from "mongoose"
 import ApiError from "../error/ApiError.js"
 import Basket from "../models/Basket.js"
 
@@ -32,8 +33,8 @@ class BasketController {
 
     async changeProductQuantity(req, res) {
         const { id } = req.params
-        const { productId, quantity } = req.body
-        const basket = await Basket.findOneAndUpdate({ _id: id, "products.productId": productId }, { $set: { "products.$.basketQuantity": quantity } })
+        const { productId, quantity } = req.body.params
+        const basket = await Basket.findOneAndUpdate({ _id: id, "products.productId": mongoose.Types.ObjectId(productId) }, { $set: { "products.$.basketQuantity": quantity } })
         return res.json({ basket })
     }
 

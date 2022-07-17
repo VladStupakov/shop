@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import DoneIcon from '@mui/icons-material/Done';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { IconButton } from '@mui/material';
-import { removeFromCart } from '../API/CartApi';
+import { addTocart, removeFromCart } from '../API/CartApi';
 
 const Container = styled.div`
     
@@ -96,11 +96,13 @@ const InCart = styled.div`
 const InCartText = styled.div`
   display: flex;
   justify-content: center;
+  align-items: center;
 `
 
 const RemoveFromCart = styled.div`
   display: flex;
   justify-content: center;
+  align-items: center;
 `
 const Product = () => {
 
@@ -116,14 +118,18 @@ const Product = () => {
 
   useEffect(() => {
     fetchOneProduct(id)
-      .then(product => setProduct(product))
-      .then(setIsLoaded(true))
+      .then(product => {
+        setProduct(product)
+        setIsLoaded(true)
+      })
   }, [id])
 
   useEffect(() => {
-    if (isLoaded)
-      if (cartProducts.findIndex(p => p.id === product._id) !== -1)
+    if (isLoaded) {
+      const indx = cartProducts.findIndex(p => p.id === product._id)
+      if (indx !== -1)
         setIsInCart(true)
+    }
   }, [cartProducts, isLoaded])
 
   const handleQuantityChange = (operation) => {
@@ -135,57 +141,58 @@ const Product = () => {
   }
 
   const handleAddToCart = () => {
-
+    addTocart(dispatch, cartId, product, quantity)
   }
 
   const handleRemoveFromCart = () => {
-      removeFromCart(dispatch, cartId, product._id)
-      setIsInCart(false)
+    removeFromCart(dispatch, cartId, product._id)
+    setIsInCart(false)
   }
 
   return (
-
-    <Container>
-      <Wrapper>
-        <ImgContainer>
-          <Image src={process.env.REACT_APP_API_URL + product.img} />
-        </ImgContainer>
-        <InfoContainer>
-          <Title>{product.name}</Title>
-          <Desc>{product.description}</Desc>
-          <Price>{product.price} UAH</Price>
-          {
-            !isInCart ?
-              <AddContainer>
-                <AmountContainer>
-                  <Remove onClick={() => handleQuantityChange("dec")} sx={{ cursor: 'pointer' }} />
-                  <Amount value={quantity} onChange={handleQuantitySet} />
-                  <Add onClick={() => handleQuantityChange("inc")} sx={{ cursor: 'pointer' }} />
-                </AmountContainer>
-                <Button onClick={handleAddToCart}>ADD TO CART</Button>
-              </AddContainer>
+      <Container>
+        <Wrapper>
+          <ImgContainer>
+            <Image src={process.env.REACT_APP_API_URL + product.img} />
+          </ImgContainer>
+          <InfoContainer>
+            <Title>{product.name}</Title>
+            <Desc>{product.description}</Desc>
+            <Price>{product.price} UAH</Price>
+            {isLoaded ?
+              !isInCart ?
+                <AddContainer>
+                  <AmountContainer>
+                    <Remove onClick={() => handleQuantityChange("dec")} sx={{ cursor: 'pointer' }} />
+                    <Amount value={quantity} onChange={handleQuantitySet} />
+                    <Add onClick={() => handleQuantityChange("inc")} sx={{ cursor: 'pointer' }} />
+                  </AmountContainer>
+                  <Button onClick={handleAddToCart}>ADD TO CART</Button>
+                </AddContainer>
+                :
+                <InCart>
+                  <InCartText>
+                    <DoneIcon color='success' />
+                    Added to cart
+                    <DoneIcon color='success' />
+                  </InCartText>
+                  <RemoveFromCart>
+                    Remove
+                    <IconButton onClick={handleRemoveFromCart}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </RemoveFromCart>
+                </InCart>
               :
-              <InCart>
-                <InCartText>
-                  <DoneIcon color='success' />
-                  Added to cart
-                  <DoneIcon color='success' />
-                </InCartText>
-                <RemoveFromCart>
-                  Remove
-                  <IconButton onClick={handleRemoveFromCart}>
-                    <DeleteIcon />
-                  </IconButton>
-                </RemoveFromCart>
-              </InCart>
+              null
+            }
+            <RatingForm />
+          </InfoContainer>
+          {isLoaded &&
+            <CommentSection comments={product.reviews} />
           }
-          <RatingForm />
-        </InfoContainer>
-        {isLoaded &&
-          <CommentSection comments={product.reviews} />
-        }
-      </Wrapper>
-    </Container>
+        </Wrapper>
+      </Container>
   );
 };
 

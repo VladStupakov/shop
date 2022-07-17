@@ -66,7 +66,8 @@ const Icon = styled.div`
     justify-content: center;
     margin: 10px;
     &:hover{
-        background-color: rgb(25, 118, 210)
+        //background-color: rgb(25, 118, 210)
+        scale: 1.2;
     }
 `
 
@@ -128,12 +129,12 @@ const ProductItem = ({ product }) => {
                 </Icon>
                 {
                     isInCart === -1 ?
-                        <Icon onClick={handleAddToCartClick}>
-                            <AddShoppingCartIcon />
+                        <Icon onClick={handleAddToCartClick} >
+                            <AddShoppingCartIcon color='success'/>
                         </Icon>
                         :
-                        <Icon onClick={handleRemoveFromCart}>
-                            <RemoveShoppingCartIcon />
+                        <Icon onClick={handleRemoveFromCart} >
+                            <RemoveShoppingCartIcon color='error'/>
                         </Icon>
                 }
             </IconContainer>

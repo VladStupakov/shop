@@ -1,8 +1,9 @@
-import { Add, Remove } from '@mui/icons-material';
 import React, { useEffect } from 'react'
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import CartProduct from '../components/Products/CartProduct';
 
 
 const Container = styled.div`
@@ -25,10 +26,8 @@ const TopButton = styled.button`
   padding: 10px;
   font-weight: 600;
   cursor: pointer;
-  border: ${(props) => props.type === "filled" && "none"};
   background-color: ${(props) =>
-        props.type === "filled" ? "black" : "transparent"};
-  color: ${(props) => props.type === "filled" && "white"};
+    props.type === "filled" ? "black" : "transparent"};
 `;
 
 const TopTexts = styled.div`
@@ -46,55 +45,6 @@ const Bottom = styled.div`
 
 const Info = styled.div`
   flex: 3;
-`;
-
-const Product = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 20px;
-  border-bottom: 1px solid lightgrey;
-`;
-
-const ProductDetail = styled.div`
-  flex: 2;
-  display: flex;
-`;
-
-const Image = styled.img`
-  width: 200px;
-`;
-
-const Details = styled.div`
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-`;
-
-const ProductName = styled.span``;
-
-const PriceDetail = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
-
-const ProductAmountContainer = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-`;
-
-const ProductAmount = styled.div`
-  font-size: 24px;
-  margin: 5px;
-`;
-
-const ProductPrice = styled.div`
-  font-size: 30px;
-  font-weight: 200;
 `;
 
 
@@ -131,66 +81,60 @@ const Button = styled.button`
 `;
 const Cart = () => {
 
-    const cart = useSelector((state) => state.cart)
+  const cart = useSelector((state) => state.cart)
+  const [total, setTotal] = useState()
 
-    return (
-        <Container>
-            <Title>YOUR CART</Title>
-            <Top>
-                <TopButton>CONTINUE SHOPPING</TopButton>
-                <TopTexts>
-                    <TopText>Products(2)</TopText>
-                    <TopText>Your Wishlist (0)</TopText>
-                </TopTexts>
-            </Top>
-            <Bottom>
-                <Info>
-                    {cart.products.map((product) => (
-                        <Product key={product.id}>
-                            <ProductDetail>
-                                <Image src={process.env.REACT_APP_API_URL + product.img} />
-                                <Details>
-                                    <ProductName>
-                                        {product.name}
-                                    </ProductName>
-                                </Details>
-                            </ProductDetail>
-                            <PriceDetail>
-                                <ProductAmountContainer>
-                                    <Add />
-                                    <ProductAmount>{product.basketQuantity}</ProductAmount>
-                                    <Remove />
-                                </ProductAmountContainer>
-                                <ProductPrice>
-                                    $ {product.price * product.basketQuantity}
-                                </ProductPrice>
-                            </PriceDetail>
-                        </Product>
-                    ))}
-                </Info>
-                <Summary>
-                    <SummaryTitle>ORDER SUMMARY</SummaryTitle>
-                    <SummaryItem>
-                        <SummaryItemText>Subtotal</SummaryItemText>
-                        <SummaryItemPrice>$ </SummaryItemPrice>
-                    </SummaryItem>
-                    <SummaryItem>
-                        <SummaryItemText>Estimated Shipping</SummaryItemText>
-                        <SummaryItemPrice>$ 5.90</SummaryItemPrice>
-                    </SummaryItem>
-                    <SummaryItem>
-                        <SummaryItemText>Shipping Discount</SummaryItemText>
-                        <SummaryItemPrice>$ -5.90</SummaryItemPrice>
-                    </SummaryItem>
-                    <SummaryItem type="total">
-                        <SummaryItemText>Total</SummaryItemText>
-                        <SummaryItemPrice>$ </SummaryItemPrice>
-                    </SummaryItem>
-                    <Button>CHECKOUT NOW</Button>
-                </Summary>
-            </Bottom>
-        </Container>
-    )
+  useEffect(()=>{
+      let sum = 0
+      cart?.products?.map(p =>{
+        sum += p.basketQuantity * p.price
+      })
+      setTotal(sum)
+  }, [cart.products])
+
+  return (
+    <Container>
+      <Title>YOUR CART</Title>
+      <Top>
+        <Link to='/products'>
+          <TopButton to='/products'>CONTINUE SHOPPING</TopButton>
+        </Link>
+        <TopTexts>
+          <TopText>Products({cart.products.length})</TopText>
+          <TopText>Your Wishlist (0)</TopText>
+        </TopTexts>
+      </Top>
+      <Bottom>
+        <Info>
+          {
+            cart.products?.map(product =>{
+              return <CartProduct key={product.id} product={product}></CartProduct>
+            })
+          }
+        </Info>
+        <Summary>
+          <SummaryTitle>ORDER SUMMARY</SummaryTitle>
+          <SummaryItem>
+            <SummaryItemText>Subtotal</SummaryItemText>
+            <SummaryItemPrice>$ </SummaryItemPrice>
+          </SummaryItem>
+          <SummaryItem>
+            <SummaryItemText>Estimated Shipping</SummaryItemText>
+            <SummaryItemPrice>$ 5.90</SummaryItemPrice>
+          </SummaryItem>
+          <SummaryItem>
+            <SummaryItemText>Shipping Discount</SummaryItemText>
+            <SummaryItemPrice>$ -5.90</SummaryItemPrice>
+          </SummaryItem>
+          <SummaryItem type="total">
+            <SummaryItemText>Total</SummaryItemText>
+            <SummaryItemPrice>{total} UAH</SummaryItemPrice>
+          </SummaryItem>
+          <Button>CHECKOUT NOW</Button>
+        </Summary>
+      </Bottom>
+    </Container>
+  )
 }
 
 export default Cart
