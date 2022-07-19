@@ -4,7 +4,8 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import CartProduct from '../components/Products/CartProduct';
-
+import StripeCheckout from 'react-stripe-checkout'
+import { createOrder } from '../API/CartApi';
 
 const Container = styled.div`
     padding: 20px;
@@ -83,14 +84,31 @@ const Cart = () => {
 
   const cart = useSelector((state) => state.cart)
   const [total, setTotal] = useState()
+  const [token, setToken] = useState()
 
-  useEffect(()=>{
-      let sum = 0
-      cart?.products?.map(p =>{
-        sum += p.basketQuantity * p.price
-      })
-      setTotal(sum)
+
+  useEffect(() => {
+    const sum = cart?.products?.reduce((total, p) => {
+      return total + p.basketQuantity * p.price
+    }, 0)
+    setTotal(sum)
   }, [cart.products])
+
+  const onToken = (token) => {
+    setToken(token)
+  }
+
+  useEffect(() => {
+    const makeRequest = async () => {
+      try {
+          const response = createOrder(cart.products, token.id, 500)
+          console.log(response)
+      } catch{
+
+      }
+    };
+    token && makeRequest();
+  }, [token]);
 
   return (
     <Container>
@@ -107,30 +125,29 @@ const Cart = () => {
       <Bottom>
         <Info>
           {
-            cart.products?.map(product =>{
+            cart.products?.map(product => {
               return <CartProduct key={product.id} product={product}></CartProduct>
             })
           }
         </Info>
         <Summary>
           <SummaryTitle>ORDER SUMMARY</SummaryTitle>
-          <SummaryItem>
-            <SummaryItemText>Subtotal</SummaryItemText>
-            <SummaryItemPrice>$ </SummaryItemPrice>
-          </SummaryItem>
-          <SummaryItem>
-            <SummaryItemText>Estimated Shipping</SummaryItemText>
-            <SummaryItemPrice>$ 5.90</SummaryItemPrice>
-          </SummaryItem>
-          <SummaryItem>
-            <SummaryItemText>Shipping Discount</SummaryItemText>
-            <SummaryItemPrice>$ -5.90</SummaryItemPrice>
-          </SummaryItem>
           <SummaryItem type="total">
             <SummaryItemText>Total</SummaryItemText>
             <SummaryItemPrice>{total} UAH</SummaryItemPrice>
           </SummaryItem>
-          <Button>CHECKOUT NOW</Button>
+          <StripeCheckout
+            name="MY SHOP"
+            image="https://avatars.githubusercontent.com/u/1486366?v=4"
+            billingAddress
+            shippingAddress
+            description={`Your total is $${total}`}
+            amount={total * 100}
+            token={onToken}
+            stripeKey={process.env.REACT_APP_STRIPE_KEY}
+          >
+            <Button>CHECKOUT NOW</Button>
+          </StripeCheckout>
         </Summary>
       </Bottom>
     </Container>

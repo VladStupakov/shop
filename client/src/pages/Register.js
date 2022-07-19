@@ -3,11 +3,12 @@ import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import { registrationSchema } from "../schemas/validationSchemas";
 import { Button, Checkbox, FormControlLabel, IconButton, InputAdornment, TextField } from '@mui/material'
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import {  Visibility, VisibilityOff } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { register } from "../API/UserApi";
 import { refreshError } from "../store/userSlice";
 import { Link } from "react-router-dom";
+import jwt_decode from "jwt-decode";
 
 const Container = styled.div`
   height: 95vh;
@@ -62,6 +63,12 @@ const ToLogin = styled(Link)`
   text-decoration: none;
 `
 
+const GoogleRegistrationButton = styled.div`
+  margin-bottom: 20px;
+  width: 100%;
+  align-items: center;
+`
+
 const initialValues = {
   name: "",
   surname: "",
@@ -70,12 +77,15 @@ const initialValues = {
   isSeller: false
 };
 
+
+
 const Register = () => {
 
   const [showPassword, setShowPassword] = useState(false)
   const dispatch = useDispatch()
   const error = useSelector(state => state.user.error)
   const [successRegistration, setSuccessRegistration] = useState()
+  const [updateState, setUpdateState] = useState()
 
   const formSubmit = (user) => {
     register(dispatch, user)
@@ -92,9 +102,30 @@ const Register = () => {
     setShowPassword(prevState => !prevState)
   }
 
+  const handleCallbackResponse = (response) => {
+    const user = jwt_decode(response.credential)
+    formik.setFieldValue('name', user.given_name)
+    formik.setFieldValue('surname', user.family_name)
+    formik.setFieldValue('email', user.email)
+  }
+
+
   useEffect(() => {
     if (error)
       dispatch(refreshError())
+  }, [])
+
+  useEffect(() => {
+    /* global google */
+    google.accounts.id.initialize({
+      client_id: '438642806323-qt0n5o33tpsas0s051is0fsl4cv4a0nj.apps.googleusercontent.com',
+      callback: handleCallbackResponse
+    })
+
+    google.accounts.id.renderButton(
+      document.getElementById('googleRegistration'),
+      {theme: 'outline', size: 'large'}
+    )
   }, [])
 
   const SuccessfullRegistration = () => {
@@ -119,7 +150,7 @@ const Register = () => {
               </Title>
               <Form onSubmit={formik.handleSubmit}>
                 <InputContainer>
-                  <Input
+                  <Input 
                     id="name"
                     name="name"
                     label="Name"
@@ -189,6 +220,7 @@ const Register = () => {
                   onChange={formik.handleChange}
                   sx={{ mb: '20px' }}
                 />
+                <GoogleRegistrationButton id='googleRegistration'></GoogleRegistrationButton>
                 <SubmitButton color="primary" variant="contained" type="submit">
                   Submit
                 </SubmitButton>
