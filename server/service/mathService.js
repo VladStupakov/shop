@@ -1,11 +1,9 @@
 
 class MathService {
     getOrderTotalPrice(products) {
-        let sum = 0
-        products.forEach(product => {
-            sum += product.basketQuantity * product.productId.price
-        });
-        return sum
+        return products.reduce((sum, product) => {
+            sum + product.basketQuantity * product.price
+        }, 0);
     }
 
 }

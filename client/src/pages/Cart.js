@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import CartProduct from '../components/Products/CartProduct';
 import StripeCheckout from 'react-stripe-checkout'
 import { createOrder } from '../API/CartApi';
+import { setCart } from '../store/cartSlice';
+
 
 const Container = styled.div`
     padding: 20px;
@@ -85,6 +87,8 @@ const Cart = () => {
   const cart = useSelector((state) => state.cart)
   const [total, setTotal] = useState()
   const [token, setToken] = useState()
+  const dispatch = useDispatch()
+  const [isPaymentSuccess, setIsPaymentSuccess] = useState()
 
 
   useEffect(() => {
@@ -99,15 +103,19 @@ const Cart = () => {
   }
 
   useEffect(() => {
-    const makeRequest = async () => {
-      try {
-          const response = createOrder(cart.products, token.id, 500)
-          console.log(response)
-      } catch{
 
-      }
-    };
-    token && makeRequest();
+    token && createOrder(cart, token.id, total * 100, `${token.card.address_city}, ${token.card.address_line1}`)
+      .then(response => {
+        if (response.data.error) {
+          setIsPaymentSuccess(false)
+        }
+        else {
+          setIsPaymentSuccess(true)
+          setToken()
+          dispatch(setCart({ _id: cart.id, products: [] }))
+        }
+      })
+
   }, [token]);
 
   return (
@@ -138,12 +146,12 @@ const Cart = () => {
           </SummaryItem>
           <StripeCheckout
             name="MY SHOP"
-            image="https://avatars.githubusercontent.com/u/1486366?v=4"
             billingAddress
             shippingAddress
-            description={`Your total is $${total}`}
+            description={`Your total is ${total} UAH`}
             amount={total * 100}
             token={onToken}
+            currency='UAH'
             stripeKey={process.env.REACT_APP_STRIPE_KEY}
           >
             <Button>CHECKOUT NOW</Button>

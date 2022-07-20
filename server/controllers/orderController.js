@@ -3,13 +3,14 @@ import Order from "../models/Order.js"
 import MathService from "../service/mathService.js"
 import Product from '../models/Product.js'
 import Basket from "../models/Basket.js"
-const KEY = process.env.STRIPE_KEY
 import Stripe from 'stripe';
+import jwt from 'jsonwebtoken';
+const stripe = new Stripe('sk_test_51LGerqKuhajSY7Jb4k82lQEc4AiT1BN9a6douRMgwV25WWzOchBrw7V75zsz7h7DRC9UAnHkC5U6Lrv8wyY0QBh100CH3MkNV6');
 
 
 const quantityCheck = async (products) => {
     for (const product of products) {
-        const prod = await Product.findById(product.productId._id)
+        const prod = await Product.findById(product.id)
         if (prod.quantity < product.basketQuantity)
             return false
     }
@@ -17,40 +18,35 @@ const quantityCheck = async (products) => {
 }
 
 const updateProductsQuantity = async (basket) => {
-    const newBasket = await Basket.findByIdAndUpdate(basket._id, { $set: { 'products': [] } })
+    const newBasket = await Basket.findByIdAndUpdate(basket.id, { $set: { 'products': [] } })
     for (const product of basket.products) {
-        const prod = await Product.findByIdAndUpdate(product.productId._id, { "$inc": { "quantity": -`${product.basketQuantity}` } })
+        const prod = await Product.findByIdAndUpdate(product.id, { "$inc": { "quantity": -`${product.basketQuantity}` } })
     }
 }
 
 class OrderController {
     async create(req, res, next) {
-        const { basket, tokenId, amount } = req.body
-        // const isQuantityCheck = await quantityCheck(basket.products)
-        // if (!isQuantityCheck)
-        //     return res.json({ error: 'quantity error' })
-        // const totalPrice = MathService.getOrderTotalPrice(basket.products)
-        const stripe = new Stripe(KEY);
-        console.log(stripe);
-        stripe.charges.create(
+        const { basket, tokenId, amount, address } = req.body
+        const {refreshToken} = req.cookies
+        const user = jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY)
+        basket.products.forEach(product => {
+            delete product['img']
+            delete product['description']
+          });     
+        const isQuantityCheck = await quantityCheck(basket.products)
+        if (!isQuantityCheck)
+             return res.json({ error: 'quantity error' })
+        //const totalPrice = MathService.getOrderTotalPrice(basket.products)
+        const charge = await stripe.charges.create(
             {
                 source: tokenId,
                 amount: amount,
-                currency: "UAH",
-            },
-            (stripeErr, stripeRes) => {
-                if (stripeErr) {
-                    res.status(500).json(stripeErr)
-                    console.log(stripeErr)
-                } else {
-                    res.status(200).json(stripeRes)
-                    console.log(stripeRes);
-                }
+                currency: "uah",
             }
         )
-        // const order = await Order.create({ address, user: basket.user, products: basket.products, totalPrice })
-        // await updateProductsQuantity(basket)
-        //return res.json(order)
+        const order = await Order.create({ address, user: user.id, products: basket.products, totalPrice: amount /100 })
+        await updateProductsQuantity(basket)
+        return res.json(order)
     }
 
     async getAll(req, res) {

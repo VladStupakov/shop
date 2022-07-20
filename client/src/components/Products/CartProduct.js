@@ -75,7 +75,6 @@ const CartProduct = ({ product }) => {
     }
 
     useEffect(()=>{
-        console.log(quantity)
         setTimeout(() => {
             changeQuantity(dispatch, cart.id, product.id, quantity)
         }, 3000);

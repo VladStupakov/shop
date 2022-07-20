@@ -56,14 +56,15 @@ export const changeQuantity = async (dispatch, id, productId, quantity) => {
     }
 }
 
-export const createOrder = async (basket, tokenId, amount) => {
+export const createOrder = async (basket, tokenId, amount, address) => {
     const response = await $host.post("order", {
         basket,
-        tokenId: tokenId,
-        amount: amount,
+        tokenId,
+        amount,
+        address
     }, {
         headers:{
-            Authorization: `Bearer sk_test_51LGerqKuhajSY7Jb4k82lQEc4AiT1BN9a6douRMgwV25WWzOchBrw7V75zsz7h7DRC9UAnHkC5U6Lrv8wyY0QBh100CH3MkNV6`
+            Authorization: `Bearer ${process.env.REACT_APP_STRIPE_KEY}`
         }
     })
     return response
