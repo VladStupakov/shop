@@ -8,5 +8,6 @@ router.put('/:id', userController.update)
 router.post('/logout', userController.logout)
 router.get('/verify/:link', userController.verifyUser)
 router.get('/refresh', userController.refresh)
+router.get('/:id', userController.getUser)
 
 export default router

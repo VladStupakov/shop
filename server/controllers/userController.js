@@ -18,7 +18,7 @@ const generateTokens = async (user) => {
 
 class UserController {
     async registration(req, res, next) {
-        const { email, password, isSeller } = req.body
+        const { email, password, isSeller, name, surname } = req.body
         if (!email || !password) {
             return next(ApiError.badRequest('Wrong email or password'))
         }
@@ -31,7 +31,7 @@ class UserController {
         const hashPassword = await bcrypt.hash(password, salt)
 
         const verificationLink = v4()
-        const user = await User.create({ email, password: hashPassword, role: isSeller ? 'seller' : 'user', verificationLink })
+        const user = await User.create({ email, password: hashPassword, role: isSeller ? 'seller' : 'user', verificationLink, name, surname })
 
         //PORT problems
         //await mailService.sendVarificationEmail(email, `${process.env.SERVER_URL}/user/varify/${varificationLink}`)
@@ -101,6 +101,12 @@ class UserController {
             ...tokens,
             user: userDto
         })
+    }
+
+    async getUser(req, res, next) {
+        const {id} = req.params
+        const user = await User.findById(id)
+        return res.json(user)
     }
 
 }

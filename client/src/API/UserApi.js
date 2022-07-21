@@ -42,3 +42,8 @@ export const check = async (dispatch) => {
         :
         dispatch(checkSuccess({ accessToken: data.accessToken }))
 }
+
+export const getUserData = async (id) => {
+    const {data} = await $host.get('user/' + id)
+    return data
+}

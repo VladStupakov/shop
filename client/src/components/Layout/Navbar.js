@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, {  useState } from 'react'
 import styled from 'styled-components'
 import SearchIcon from '@mui/icons-material/Search';
-import { Badge, Box, Button, FormControl, IconButton, InputBase, InputLabel, MenuItem, Select } from '@mui/material';
+import { Avatar, Badge,  Button,  IconButton, InputBase } from '@mui/material';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutRequest } from '../../API/UserApi';
 
-const languages = ["ENG", "UA", "FR", "DE"]
 
 const Container = styled.div`
     height: 80px;
@@ -26,10 +25,6 @@ const Left = styled.div`
     margin-left: 40px;
 `
 
-const Language = styled.div`
-    font-size: 16px;
-    cursor: pointer;   
-`
 const SearchContainer = styled.div`
     border-radius: 10px;
     display: flex;
@@ -76,15 +71,10 @@ const SearchInput = styled(InputBase)`
 
 const Navbar = () => {
 
-    const [language, setLanguage] = useState('')
     const [searchQuery, setSearchQuery] = useState()
     const user = useSelector((state) => state.user.currentUser)
     const cartProductsCount = useSelector((state) => state.cart.products.length)
     const dispatch = useDispatch()
-
-    const handleLanguageChange = (e) => {
-        setLanguage(e.target.value);
-    };
 
     const handleSearchClick = () => {
 
@@ -108,24 +98,6 @@ const Navbar = () => {
                 </CustomLink>
             </Left>
             <Center>
-                {/* <Language>
-                        <Box sx={{ minWidth: 120, minHeight: "30px" }}>
-                            <FormControl fullWidth>
-                                <InputLabel id="select-label">Language</InputLabel>
-                                <Select
-                                    labelId="select-label"
-                                    id="select"
-                                    value={language}
-                                    label="Language"
-                                    onChange={handleLanguageChange}
-                                >
-                                    {languages.map(lang => {
-                                        return <MenuItem value={lang} key={lang}>{lang}</MenuItem>
-                                    })}
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </Language> */}
                 <SearchContainer>
                     <SearchInput
                         placeholder="Search..."
@@ -139,7 +111,10 @@ const Navbar = () => {
             <Right>
                 {
                     user ?
-                        <>
+                        <>                           
+                            <ButtonListItem onClick={handleLogoutClick}>
+                                <Button variant="contained" >LOGOUT</Button>
+                            </ButtonListItem>
                             <CustomLink to='/cart'>
                                 <ButtonListItem>
                                     {
@@ -152,9 +127,9 @@ const Navbar = () => {
                                     }
                                 </ButtonListItem>
                             </CustomLink>
-                            <ButtonListItem onClick={handleLogoutClick}>
-                                <Button variant="contained" >LOGOUT</Button>
-                            </ButtonListItem>
+                            <CustomLink to='/profile'>
+                                    <Avatar sx={{ml: '10px'}}></Avatar>
+                            </CustomLink>
                         </>
                         :
                         <>
