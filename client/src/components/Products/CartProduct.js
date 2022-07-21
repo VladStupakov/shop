@@ -65,48 +65,54 @@ const ProductPrice = styled.div`
 `;
 const CartProduct = ({ product }) => {
 
-    const cart = useSelector((state) => state.cart)
-    const [quantity, setQuantity] = useState(product.basketQuantity)
-    const dispatch = useDispatch()
+  const cart = useSelector((state) => state.cart)
+  const [quantity, setQuantity] = useState(product.basketQuantity)
+  const [debouncedQuantity, setDeboncedQuantity] = useState(quantity)
+  const dispatch = useDispatch()
 
+  const handleQuantitySet = (event) => {
+    setQuantity(Number(event.target.value))
+  }
 
-    const handleQuantitySet = (event) => {
-        setQuantity(Number(event.target.value))       
+  useEffect(() => {
+    const timer = setTimeout(() => setDeboncedQuantity(quantity), 500)
+    return () => {
+      clearTimeout(timer)
     }
+  }, [quantity])
 
-    useEffect(()=>{
-        setTimeout(() => {
-            changeQuantity(dispatch, cart.id, product.id, quantity)
-        }, 3000);
-    }, [quantity])
+  useEffect(() =>{
+    changeQuantity(dispatch, cart.id, product.id, debouncedQuantity)
+  }, [debouncedQuantity])
 
-    const handleRemoveFromCart = () => {
-        removeFromCart(dispatch, cart.id, product.id)
-    }
 
-    return (
-        <Product>
-            <ProductDetail>
-                <Image src={process.env.REACT_APP_API_URL + product.img} />
-                <Details>
-                    <ProductName>
-                        {product.name}
-                    </ProductName>
-                </Details>
-            </ProductDetail>
-            <PriceDetail>
-                <ProductAmountContainer>
-                    <Amount value={quantity} onChange={handleQuantitySet} />
-                    <IconButton onClick={handleRemoveFromCart}>
-                      <DeleteIcon/>
-                    </IconButton>
-                </ProductAmountContainer>
-                <ProductPrice>
-                    $ {product.price * quantity}
-                </ProductPrice>
-            </PriceDetail>
-        </Product>
-    )
+  const handleRemoveFromCart = () => {
+    removeFromCart(dispatch, cart.id, product.id)
+  }
+
+  return (
+    <Product>
+      <ProductDetail>
+        <Image src={process.env.REACT_APP_API_URL + product.img} />
+        <Details>
+          <ProductName>
+            {product.name}
+          </ProductName>
+        </Details>
+      </ProductDetail>
+      <PriceDetail>
+        <ProductAmountContainer>
+          <Amount value={quantity} onChange={handleQuantitySet} />
+          <IconButton onClick={handleRemoveFromCart}>
+            <DeleteIcon />
+          </IconButton>
+        </ProductAmountContainer>
+        <ProductPrice>
+          $ {product.price * quantity}
+        </ProductPrice>
+      </PriceDetail>
+    </Product>
+  )
 }
 
 export default CartProduct

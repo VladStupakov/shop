@@ -1,14 +1,14 @@
 import { $authHost, $host } from "./index"
-import { loginFail, loginStart, loginSuccess, logout, checkFail, checkStart, checkSuccess,registrationFail,registrationSuccess } from "../store/userSlice"
+import { loginFail, loginStart, loginSuccess, logout, checkFail, checkStart, checkSuccess, registrationFail, registrationSuccess } from "../store/userSlice"
 
 
 export const login = async (dispatch, user) => {
     dispatch(loginStart())
     try {
         const { data } = await $host.post('user/login', user)
-        dispatch(loginSuccess({ ...data.user, accessToken: data.accessToken }))       
+        dispatch(loginSuccess({ ...data.user, accessToken: data.accessToken }))
     } catch (err) {
-        dispatch(loginFail(err.response.data.message))      
+        dispatch(loginFail(err.response.data.message))
     }
 };
 
@@ -34,12 +34,11 @@ export const logoutRequest = async (dispatch) => {
     return data
 };
 
-export const check = async(dispatch) =>{
+export const check = async (dispatch) => {
     dispatch(checkStart())
-    try {
-        const { data } = await $authHost.get('user/refresh')
-        dispatch(checkSuccess({accessToken: data.accessToken }))
-    } catch (err) {
+    const { data } = await $authHost.get('user/refresh')
+    data.error === 'Unautorized' ?
         dispatch(checkFail())
-    }
+        :
+        dispatch(checkSuccess({ accessToken: data.accessToken }))
 }

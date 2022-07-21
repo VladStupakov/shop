@@ -7,6 +7,8 @@ import mailService from '../service/mailService.js';
 import tokenService from '../service/tokenService.js';
 import UserDto from '../dtos/user-dto.js';
 
+const COOKIE_MAX_AGE = 30 * 24 * 60 * 60 * 1000
+
 const generateTokens = async (user) => {
     const userDto = new UserDto(user)
     const tokens = tokenService.generateTokens({ ...userDto })
@@ -34,8 +36,6 @@ class UserController {
         //PORT problems
         //await mailService.sendVarificationEmail(email, `${process.env.SERVER_URL}/user/varify/${varificationLink}`)
 
-        //const { tokens, userDto } = await generateTokens(user)
-
         const basket = await Basket.create({ user: user._id })
 
         return res.json(user)
@@ -52,7 +52,7 @@ class UserController {
             return next(ApiError.internal('Wrong password'))
         }
         const { tokens, userDto } = await generateTokens(user)
-        res.cookie('refreshToken', tokens.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
+        res.cookie('refreshToken', tokens.refreshToken, { maxAge: COOKIE_MAX_AGE, httpOnly: true })
         return res.json({
             ...tokens,
             user: userDto
@@ -96,7 +96,7 @@ class UserController {
             return res.json({ error: 'Unautorized' })
         const user = await User.findById(userData.id)
         const { tokens, userDto } = await generateTokens(user)
-        res.cookie('refreshToken', tokens.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true })
+        res.cookie('refreshToken', tokens.refreshToken, { maxAge: COOKIE_MAX_AGE, httpOnly: true })
         return res.json({
             ...tokens,
             user: userDto

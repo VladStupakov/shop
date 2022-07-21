@@ -29,6 +29,7 @@ const userSlice = createSlice({
     },
     checkFail: (state) => {
       state.isFetching = false
+      state.currentUser = null
       localStorage.removeItem('accessToken')
     },
     checkSuccess: (state, action) => {
