@@ -62,10 +62,15 @@ class UserController {
     async update(req, res, next) {
         const { email, password, name, surname } = req.body
         const { id } = req.params
+        const existentUser = await User.findOne({ email: email })
+        if (String(existentUser._id) !== id) {
+            return res.json({error: 'This email already in use'})
+        }
         const salt = await bcrypt.genSalt(Number(process.env.BCRYPT_SALT))
         const hashPassword = await bcrypt.hash(password, salt)
         const user = await User.findByIdAndUpdate(id, { email, password: hashPassword, name, surname })
         const { tokens, userDto } = await generateTokens(user)
+        res.cookie('refreshToken', tokens.refreshToken, { maxAge: COOKIE_MAX_AGE, httpOnly: true })
         return res.json({
             ...tokens,
             user: userDto

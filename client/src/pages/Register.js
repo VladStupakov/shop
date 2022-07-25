@@ -85,7 +85,6 @@ const Register = () => {
   const dispatch = useDispatch()
   const error = useSelector(state => state.user.error)
   const [successRegistration, setSuccessRegistration] = useState()
-  const [updateState, setUpdateState] = useState()
 
   const formSubmit = (user) => {
     register(dispatch, user)

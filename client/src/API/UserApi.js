@@ -1,5 +1,5 @@
 import { $authHost, $host } from "./index"
-import { loginFail, loginStart, loginSuccess, logout, checkFail, checkStart, checkSuccess, registrationFail, registrationSuccess } from "../store/userSlice"
+import { loginFail, loginStart, loginSuccess, logout, checkFail, checkStart, checkSuccess, registrationFail, registrationSuccess, updateStart, updateSuccess, updateFail } from "../store/userSlice"
 
 
 export const login = async (dispatch, user) => {
@@ -44,6 +44,17 @@ export const check = async (dispatch) => {
 }
 
 export const getUserData = async (id) => {
-    const {data} = await $host.get('user/' + id)
+    const { data } = await $host.get('user/' + id)
     return data
+}
+
+export const updateUserData = async (dispatch, newData) => {
+    dispatch(updateStart())
+    const { data } = await $host.put('user/' + newData.id, newData)
+    data.error ?
+        dispatch(updateFail(data.error))
+        :
+        dispatch(updateSuccess({ ...data.user, accessToken: data.accessToken }))
+
+
 }

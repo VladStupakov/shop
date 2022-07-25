@@ -61,7 +61,8 @@ class OrderController {
     }
     async getAllUserOrders(req, res) {
         const user = req.params.id
-        const orders = await Order.findOne({ user })
+        const orders = await Order.find({ user: user }).populate('user').lean()
+        console.log(orders);
         return res.json(orders)
     }
 }

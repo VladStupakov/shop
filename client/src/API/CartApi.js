@@ -63,11 +63,15 @@ export const createOrder = async (basket, tokenId, amount, address) => {
         amount,
         address
     }, {
-        headers:{
+        headers: {
             Authorization: `Bearer ${process.env.REACT_APP_STRIPE_KEY}`
         }
     })
     return response
 }
 
+export const getUserOrders = async (id) => {
+    const { data } = await $authHost.get('order/user/' + id)
+    return data
+}
 
