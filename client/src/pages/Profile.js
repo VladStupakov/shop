@@ -91,7 +91,7 @@ const Profile = () => {
         {
           user.role === 'seller' ?
             <Option onClick={() => setActiveOption(2)} active={activeOption === 2}>
-              Your brands
+              Your products
             </Option>
             :
             null

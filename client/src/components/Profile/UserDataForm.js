@@ -20,7 +20,7 @@ const Input = styled(TextField)`
   width: 100%;
 `
 
-const RegistrationError = styled.div`
+const UpdateError = styled.div`
   margin-top: 10px;
   color: red;
 `
@@ -104,7 +104,7 @@ const UserDataForm = ({ user }) => {
                 <Button variant="contained" type='submit'>
                     Save
                 </Button>
-                <RegistrationError>{error}</RegistrationError>
+                <UpdateError>{error}</UpdateError>
             </Form>
         </>
     )

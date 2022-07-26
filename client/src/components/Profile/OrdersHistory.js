@@ -92,7 +92,7 @@ const OrdersHistory = ({ userId }) => {
                                 <OrderProducts>
                                     {order.products.map(product => {
                                         return (
-                                            <ProductItem>
+                                            <ProductItem key={product.id}>
                                                 <ProductName>{product.name}</ProductName>
                                                 <ProductQuantity>{product.basketQuantity}</ProductQuantity>
                                                 <ProductPrice>{product.price} UAH</ProductPrice>

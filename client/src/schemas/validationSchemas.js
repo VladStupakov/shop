@@ -25,3 +25,8 @@ export const loginSchema = Yup.object({
         .matches('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})', 'Password must contain one lower and upper case letter and a number ')
 })
 
+export const brandSchema = Yup.object({
+    name: Yup.string()
+        .min(2, "Minimum 2 characters long")
+        .required("Name is required"),
+})
