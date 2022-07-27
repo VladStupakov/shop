@@ -4,12 +4,12 @@ import { $authHost, $host } from "./index";
 export const fetchFilters = async (dispatch) => {
     dispatch(dataFetchStart())
     try {
-        const  {data} = await $host.get('category') 
+        const { data } = await $host.get('category')
         const result = await $host.get('brand')
         const brands = result.data
-        dispatch(dataFetchSuccess({ categories: data, brands })) 
+        dispatch(dataFetchSuccess({ categories: data, brands }))
     } catch (err) {
-        dispatch(dataFetchFail(err.response.data.message))      
+        dispatch(dataFetchFail(err.response.data.message))
     }
 }
 
@@ -28,7 +28,7 @@ export const fetchProducts = async (brands, categoryId, page, limit, sorting) =>
 }
 
 export const fetchOneProduct = async (id) => {
-    const {data} = await $host.get('product/' + id)
+    const { data } = await $host.get('product/' + id)
     return data
 }
 
@@ -38,7 +38,16 @@ export const fetchBrands = async () => {
 }
 
 export const createBrand = async (brand) => {
-    const {data} = await $authHost.post('brand', brand)
+    const { data } = await $authHost.post('brand', brand)
     return data
 }
 
+export const updateBrand = async (id, brand) => {
+    const { data } = await $authHost.put('brand/' + id, brand)
+    return data
+}
+
+export const deleteBrand = async (id) => {
+    const { data } = await $authHost.delete('brand/' + id)
+    return data
+}
