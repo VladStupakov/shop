@@ -6,6 +6,7 @@ const router = express.Router()
 router.post('/', checkRole('seller'), brandController.create)
 router.get('/', brandController.getAll)
 router.get('/:id', brandController.getOne)
+router.get('/user/:id', brandController.getUserBrands)
 router.put('/:id', checkRole('seller'), brandController.update)
 router.delete('/:id', checkRole('seller'),  brandController.delete)
 

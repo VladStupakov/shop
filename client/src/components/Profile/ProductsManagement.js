@@ -1,16 +1,16 @@
-import { Autocomplete, Button, IconButton, Modal, TextField } from '@mui/material'
+import { IconButton } from '@mui/material'
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
-import { Box } from '@mui/system';
-import { useFormik } from 'formik';
-import { brandSchema } from '../../schemas/validationSchemas';
-import { countries } from '../../utils/consts';
-import { createBrand, deleteBrand, updateBrand } from '../../API/ProductApi';
+import { deleteBrand, getUserBrands } from '../../API/ProductApi';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import BrandModal from '../Modals/BrandModal';
+import { useEffect } from 'react';
+import ProductModal from '../Modals/ProductModal';
+import { setSelectedBrands } from '../../store/filtersSlice';
 
 const Container = styled.div`
   display: flex;
@@ -18,7 +18,8 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   margin: 10px;
-  overflow: hidden;
+  overflow-y: scroll;
+  scrollbar-width: thin;
 `
 
 const NoBrandsTitle = styled.div`
@@ -74,36 +75,6 @@ const CustomIconButton = styled(IconButton)`
   
 `
 
-const CreateBrandFormContainer = styled(Box)`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 400px;
-  background-color: white;
-  border: 2px solid black;
-  padding: 30px;
-  justify-content: center;
-`
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`
-const InputContainer = styled.div`
-  margin-bottom: 20px;
-`
-
-const Input = styled(TextField)`
-  width: 100%;
-`
-
-const ResponseError = styled.div`
-  margin-top: 10px;
-  color: red;
-`
-
 const ProductsContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -128,90 +99,54 @@ const ProductsList = styled.div`
 
 const Product = styled.div`
   display: flex;
-  border: 1px solid lightgray;
-  border-radius: 6px;
+  border-bottom: 1px solid lightgray;
   margin: 10px;
+  padding: 5px;
 `
 
 const ProductsManagement = ({ userId }) => {
 
-  const userBrands = useSelector(state => state.filters.brands.filter(brand => brand.creator === userId))
+  const [brands, setBrands] = useState()
+  const [updateBrandsList, setUpdateBrandsList] = useState(0)
   const [openBrandModal, setOpenBrandModal] = useState(false)
-  const [responseError, setResponseError] = useState()
   const [isEdit, setIsEdit] = useState(false)
-  const [selectedBrandId, setSelectedBrandId] = useState()
-  const dispatch = useDispatch()
-
-  const formSubmit = (data) => {
-    createBrand(data)
-      .then(response => {
-        response.error ?
-          setResponseError(response.data.error)
-          :
-          setOpenBrandModal(false)
-      })
-  }
-
-  const editBrand = (data) => {
-    updateBrand(selectedBrandId, data)
-      .then(response => {
-        response.error ?
-          setResponseError(response.data.error)
-          :
-          setOpenBrandModal(false)
-      })
-  }
-
+  const [selectedBrand, setSelectedBrand] = useState()
+  const [openProductModal, setOpenProductModal] = useState(false)
+  const [isProductEdit, setIsProductEdit] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState()
+  const [products, setProducts] = useState()
 
   const handleDeleteBrand = () => {
-    deleteBrand(selectedBrandId)
-      .then(response => {
-        response.error ?
-          console.log(response.error)
-          :
-          removeFromList()
+    deleteBrand(selectedBrand._id)
+      .then(() => {
+        getUserBrands(userId)
+          .then(response => setBrands(response))
       })
   }
 
-  const removeFromList = () => {
-    const element = document.getElementById(selectedBrandId)
-    element.remove()
-  }
-
-  const formik = useFormik({
-    initialValues: {
-      name: '',
-      country: ''
-    },
-    validationSchema: brandSchema,
-    onSubmit: isEdit ? editBrand : formSubmit
-  })
-
-  const handleOpenEdit = (brand) => {
-    formik.setFieldValue('name', brand.name)
-    formik.setFieldValue('country', brand.country)
-    setIsEdit(true)
-    setOpenBrandModal(true)
-  }
+  useEffect(() => {
+    getUserBrands(userId)
+      .then(response => setBrands(response))
+  }, [updateBrandsList])
 
   return (
     <Container>
       {
-        userBrands.length === 0 ?
+        brands === undefined ?
           <NoBrandsTitle>
             You don't have any created brands
           </NoBrandsTitle>
           :
           <BrandsList>
-          <CreateTitle>Your brands</CreateTitle>
+            <CreateTitle>Your brands</CreateTitle>
             {
-              userBrands.map(brand => {
+              brands?.map(brand => {
                 return (
-                  <Brand key={brand._id} onMouseEnter={() => setSelectedBrandId(brand._id)} id={brand._id}>
+                  <Brand key={brand._id} onMouseEnter={() => { setSelectedBrand(brand) }} id={brand._id} >
                     <BrandName>{brand.name}</BrandName>
                     <BrandCountry>{brand.country}</BrandCountry>
                     <EditBrandIcons>
-                      <CustomIconButton sx={{ margin: '0 10px' }} onClick={() => { handleOpenEdit(brand) }}>
+                      <CustomIconButton sx={{ margin: '0 10px' }} onClick={() => { setOpenBrandModal(true); setSelectedBrand(brand); setIsEdit(true) }}>
                         <EditIcon />
                       </CustomIconButton>
                       <CustomIconButton sx={{ margin: '0 10px' }} onClick={handleDeleteBrand}>
@@ -231,99 +166,24 @@ const ProductsManagement = ({ userId }) => {
       <ProductsContainer>
         <CreateProduct>
           <CreateTitle>Create product</CreateTitle>
-          <CustomIconButton color="primary" size="large">
+          <CustomIconButton color="primary" size="large" onClick={() => setOpenProductModal(true)}>
             <AddIcon />
           </CustomIconButton>
         </CreateProduct>
-        <CreateTitle>Your products</CreateTitle>
-        <ProductsList>
-          <Product>123</Product>
-          <Product>123</Product>
-          <Product>123</Product>
-          <Product>123</Product>
-          <Product>123</Product>
-          <Product>123</Product>
-          <Product>123</Product>
-          <Product>123</Product>
-          <Product>123</Product>
-          <Product>123</Product>
-          <Product>123</Product>
-          <Product>123</Product>
-          <Product>123</Product>
-          <Product>123</Product>
-          <Product>123</Product>
-          <Product>123</Product>
-          <Product>123</Product>
-          <Product>123</Product>
-          <Product>123</Product>
-          <Product>123</Product>
-          <Product>123</Product>
-        </ProductsList>
+        {
+          products ?
+            <>
+              <CreateTitle>Your products</CreateTitle>
+              <ProductsList>
+
+              </ProductsList>
+            </>
+            :
+            <CreateTitle>No products yet</CreateTitle>
+        }
       </ProductsContainer>
-      <Modal
-        open={openBrandModal}
-        onClose={() => { setOpenBrandModal(false); setIsEdit(false) }}
-      >
-        <CreateBrandFormContainer>
-          <Form onSubmit={formik.handleSubmit}>
-            <InputContainer>
-              <Input
-                id="name"
-                name="name"
-                label="Name"
-                value={formik.values.name}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.name && Boolean(formik.errors.name)}
-                helperText={formik.touched.name && formik.errors.name}
-                autoComplete="off"
-              />
-            </InputContainer>
-            <InputContainer>
-              <Autocomplete
-                id="country-select"
-                options={countries}
-                autoHighlight
-                onChange={(e, value) => formik.setFieldValue("country", value.label)}
-                getOptionLabel={(option) => option.label}
-                renderOption={(props, option) => (
-                  <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
-                    <img
-                      loading="lazy"
-                      width="20"
-                      src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
-                      srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
-                      alt=""
-                    />
-                    {option.label} ({option.code}) +{option.phone}
-                  </Box>
-                )}
-                renderInput={(params) => (
-                  <Input
-                    {...params}
-                    label="Choose a country"
-                    inputProps={{
-                      ...params.inputProps,
-                      autoComplete: 'new-password',
-                    }}
-                  />
-                )}
-              />
-            </InputContainer>
-            {
-              isEdit ?
-                <Button variant="contained" type='submit'>
-                  Save
-                </Button>
-                :
-                <Button variant="contained" type='submit'>
-                  Create
-                </Button>
-            }
-            <ResponseError>{responseError}</ResponseError>
-          </Form>
-        </CreateBrandFormContainer>
-      </Modal>
+      <BrandModal openBrandModal={openBrandModal} setOpenBrandModal={setOpenBrandModal} isEdit={isEdit} setIsEdit={setIsEdit} selectedBrand={selectedBrand} setUpdateBrandsList={setUpdateBrandsList}></BrandModal>
+      <ProductModal openProductModal={openProductModal} setOpenProductModal={setOpenProductModal} isProductEdit={isProductEdit} setIsProductEdit={setIsProductEdit} selectedProduct={selectedProduct} brands={brands} ></ProductModal>
     </Container>
   )
 }

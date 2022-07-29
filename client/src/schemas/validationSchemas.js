@@ -30,3 +30,22 @@ export const brandSchema = Yup.object({
         .min(2, "Minimum 2 characters long")
         .required("Name is required"),
 })
+
+export const productSchema = Yup.object({
+    name: Yup.string()
+        .min(2, "Minimum 2 characters long")
+        .required("Name is required"),
+    description: Yup.string()
+        .min(20, "Add more information about your product")
+        .required("Surname is required"),
+    brand: Yup.string()
+        .required("Choose brand"),
+    categories: Yup.string()
+        .required("Choose category"),
+    price: Yup.string()
+        .required("Enter price"),
+    quantity: Yup.string()
+        .required("Enter quantity"),
+    img: Yup.mixed()
+        .required("Choose image"),
+})

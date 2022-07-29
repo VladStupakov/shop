@@ -19,6 +19,11 @@ class BrandController {
         const brand = await Brand.findById(id)
         return res.json(brand)
     }
+    async getUserBrands(req, res) {
+        const { id } = req.params
+        const brands = await Brand.find({creator: id})
+        return res.json(brands)
+    }
     async update(req, res){
         const { name, country } = req.body
         const { id } = req.params

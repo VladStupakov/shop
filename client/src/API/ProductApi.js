@@ -51,3 +51,17 @@ export const deleteBrand = async (id) => {
     const { data } = await $authHost.delete('brand/' + id)
     return data
 }
+
+export const getUserBrands = async (id) => {
+    const { data } = await $authHost.get('brand/user/' + id)
+    return data
+}
+
+export const createProduct = async (body) =>{
+    const { data } = await $authHost.post('product', body,{
+        headers:{
+            'Content-Type' : 'multipart/form-data'
+        }
+    })
+    return data
+}
