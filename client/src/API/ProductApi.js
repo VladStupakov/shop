@@ -57,11 +57,26 @@ export const getUserBrands = async (id) => {
     return data
 }
 
-export const createProduct = async (body) =>{
-    const { data } = await $authHost.post('product', body,{
-        headers:{
-            'Content-Type' : 'multipart/form-data'
+export const createProduct = async (body) => {
+    const { data } = await $authHost.post('product', body, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
         }
     })
+    return data
+}
+
+export const getUserProducts = async (id) => {
+    const { data } = await $authHost.get('product/user/' + id)
+    return data
+}
+
+export const updateProduct = async (id, body) => {
+    const { data } = await $authHost.put('product/' + id, body)
+    return data
+}
+
+export const deleteProduct = async (id) => {
+    const { data } = await $authHost.delete('product/' + id)
     return data
 }

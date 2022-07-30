@@ -5,9 +5,9 @@ import fs from 'fs'
 
 class ProductController {
     async create(req, res, next) {
-        let { name, description, brand, categories, price, quantity, img } = req.body
-        const product = await Product.create({ name, description, price, brand, categories, quantity, img });
-        console.log(product);
+        const creator = req.user.id
+        const { name, description, brand, categories, price, quantity, img } = req.body
+        const product = await Product.create({ name, description, price, brand, categories, quantity, img, creator });
         return res.json(product)
     }
 
@@ -132,15 +132,17 @@ class ProductController {
         return res.json(product)
     }
 
-    async update(req, res) {
-        try {
-            let { name, description, brand, categories, price, quantity } = req.body
-            const { id } = req.params
-            const product = await Product.findByIdAndUpdate(id, { name, description, price, brand, categories, quantity, img });
-            return res.json(product)
-        } catch (e) {
-            next(ApiError.badRequest(e.message))
-        }
+    async getUserProducts(req, res) {
+        const { id } = req.params
+        const products = await Product.find({ creator: id })
+        return res.json(products)
+    }
+
+    async update(req, res, next) {
+        const { name, description, brand, categories, price, quantity } = req.body
+        const { id } = req.params
+        const product = await Product.findByIdAndUpdate(id, { name, description, price, brand, categories, quantity })
+        return res.json(product)
     }
 
     async delete(req, res) {

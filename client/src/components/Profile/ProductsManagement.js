@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
-import { deleteBrand, getUserBrands } from '../../API/ProductApi';
+import { deleteBrand, deleteProduct, getUserBrands, getUserProducts } from '../../API/ProductApi';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import BrandModal from '../Modals/BrandModal';
@@ -115,12 +115,19 @@ const ProductsManagement = ({ userId }) => {
   const [isProductEdit, setIsProductEdit] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState()
   const [products, setProducts] = useState()
+  const [updateProductsList, setUpdateProductsList] = useState(0)
 
   const handleDeleteBrand = () => {
     deleteBrand(selectedBrand._id)
       .then(() => {
-        getUserBrands(userId)
-          .then(response => setBrands(response))
+        setUpdateBrandsList(prev => prev += 1)
+      })
+  }
+
+  const handleDeleteProduct = () => {
+    deleteProduct(selectedProduct._id)
+      .then(() => {
+        setUpdateProductsList(prev => prev += 1)
       })
   }
 
@@ -128,6 +135,11 @@ const ProductsManagement = ({ userId }) => {
     getUserBrands(userId)
       .then(response => setBrands(response))
   }, [updateBrandsList])
+
+  useEffect(() => {
+    getUserProducts(userId)
+      .then(response => setProducts(response))
+  }, [updateProductsList])
 
   return (
     <Container>
@@ -175,7 +187,24 @@ const ProductsManagement = ({ userId }) => {
             <>
               <CreateTitle>Your products</CreateTitle>
               <ProductsList>
-
+                {
+                  products?.map(product => {
+                    return (
+                      <Product key={product._id} onMouseEnter={() => { setSelectedProduct(product) }} id={product._id} >
+                        <>{product.name}</>
+                        <>{product.description}</>
+                        <EditBrandIcons>
+                          <CustomIconButton sx={{ margin: '0 10px' }} onClick={() => { setOpenProductModal(true); setSelectedBrands(product); setIsProductEdit(true) }}>
+                            <EditIcon />
+                          </CustomIconButton>
+                          <CustomIconButton sx={{ margin: '0 10px' }} onClick={handleDeleteProduct}>
+                            <DeleteIcon />
+                          </CustomIconButton>
+                        </EditBrandIcons>
+                      </Product>
+                    )
+                  })
+                }
               </ProductsList>
             </>
             :
@@ -183,7 +212,7 @@ const ProductsManagement = ({ userId }) => {
         }
       </ProductsContainer>
       <BrandModal openBrandModal={openBrandModal} setOpenBrandModal={setOpenBrandModal} isEdit={isEdit} setIsEdit={setIsEdit} selectedBrand={selectedBrand} setUpdateBrandsList={setUpdateBrandsList}></BrandModal>
-      <ProductModal openProductModal={openProductModal} setOpenProductModal={setOpenProductModal} isProductEdit={isProductEdit} setIsProductEdit={setIsProductEdit} selectedProduct={selectedProduct} brands={brands} ></ProductModal>
+      <ProductModal openProductModal={openProductModal} setOpenProductModal={setOpenProductModal} isProductEdit={isProductEdit} setIsProductEdit={setIsProductEdit} selectedProduct={selectedProduct} brands={brands} setUpdateProductsList={setUpdateProductsList}></ProductModal>
     </Container>
   )
 }

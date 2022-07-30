@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { useEffect } from 'react';
 import { productSchema } from '../../schemas/validationSchemas';
 import { useSelector } from 'react-redux';
-import { createProduct } from '../../API/ProductApi';
+import { createProduct, updateProduct } from '../../API/ProductApi';
 
 
 const CreateProductFormContainer = styled(Box)`
@@ -56,19 +56,39 @@ const ImagePreview = styled.img`
     height: auto;
 `
 
-const ProductModal = ({ openProductModal, setOpenProductModal, isProductEdit, setIsProductEdit, selectedProduct, brands }) => {
+const ProductModal = ({ openProductModal, setOpenProductModal, isProductEdit, setIsProductEdit, selectedProduct, brands, setUpdateProductsList }) => {
 
     const categories = useSelector(state => state.filters.categories)
     const [responseError, setResponseError] = useState()
     const [image, setImage] = useState()
+    const [uploadNewImage, setUploadNewImage] = useState(false)
 
+    const closeModal = () => {
+        setUpdateProductsList(prevState => prevState += 1)
+        setIsProductEdit(false)
+        setOpenProductModal(false)
+        setUploadNewImage(false)
+        formik.resetForm()
+    }
 
     const formSubmit = (data) => {
         createProduct(data)
+            .then(response => {
+                response.error ?
+                    setResponseError(response.data.error)
+                    :
+                    closeModal()
+            })
     }
 
     const editProduct = (data) => {
-
+        updateProduct(selectedProduct._id, data)
+            .then(response => {
+                response.error ?
+                    setResponseError(response.data.error)
+                    :
+                    closeModal()
+            })
     }
 
     const formik = useFormik({
@@ -86,13 +106,17 @@ const ProductModal = ({ openProductModal, setOpenProductModal, isProductEdit, se
     })
 
     const UploadedImage = ({ img }) => {
+
         if (!img)
             return null
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setImage(reader.result)
-        };
-        reader.readAsDataURL(formik.values.img)
+        if (uploadNewImage) {
+            console.log('new image');
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImage(reader.result)
+            };
+            reader.readAsDataURL(img)
+        }
 
         return (
             <ImagePreview
@@ -100,12 +124,28 @@ const ProductModal = ({ openProductModal, setOpenProductModal, isProductEdit, se
                 alt={formik.values.img.name}
             />
         )
+
     }
+
+    const setFormValues = () => {
+        formik.setFieldValue('name', selectedProduct.name)
+        formik.setFieldValue('description', selectedProduct.description)
+        formik.setFieldValue('brand', selectedProduct.brand)
+        formik.setFieldValue('categories', selectedProduct.categories)
+        formik.setFieldValue('price', selectedProduct.price)
+        formik.setFieldValue('quantity', selectedProduct.quantity)
+        formik.setFieldValue('img', selectedProduct.img)
+        setImage(process.env.REACT_APP_API_URL + selectedProduct.img)
+    }
+
+    useEffect(() => {
+        isProductEdit && setFormValues() 
+    }, [isProductEdit])
 
     return (
         <Modal
             open={openProductModal}
-            onClose={() => { setOpenProductModal(false); setIsProductEdit(false) }}
+            onClose={closeModal}
         >
             <CreateProductFormContainer>
                 <Form onSubmit={formik.handleSubmit}>
@@ -202,6 +242,7 @@ const ProductModal = ({ openProductModal, setOpenProductModal, isProductEdit, se
                             name="file"
                             type="file"
                             onChange={e => {
+                                setUploadNewImage(true)
                                 formik.setFieldValue("img", e.currentTarget.files[0]);
                             }}
                         />
