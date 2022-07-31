@@ -27,6 +27,8 @@ const OrderContainer = styled.div`
 const NoOrders = styled.div`
     font-size: 30px;
     font-weight: bold;
+    justify-content: center;
+    display: flex;
 `
 
 const OrderNumber = styled.div`
@@ -77,6 +79,7 @@ const OrdersHistory = ({ userId }) => {
     const [orders, setOrders] = useState()
 
     useEffect(() => {
+       
         getUserOrders(userId)
             .then(response => setOrders(response))
     }, [])
@@ -84,7 +87,7 @@ const OrdersHistory = ({ userId }) => {
     return (
         <OrdersList>
             {
-                orders ?
+                orders.length > 0 ?
                     orders.map(order => {
                         return (
                             <OrderContainer key={order._id}>

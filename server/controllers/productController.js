@@ -138,10 +138,20 @@ class ProductController {
         return res.json(products)
     }
 
-    async update(req, res, next) {
-        const { name, description, brand, categories, price, quantity } = req.body
+    async update(req, res) {
+        const { name, description, brand, categories, price, quantity, img } = req.body
         const { id } = req.params
-        const product = await Product.findByIdAndUpdate(id, { name, description, price, brand, categories, quantity })
+        const product = await Product.findById(id)
+        if (product.img !== img)
+            fs.unlink(`uploads/${product.img}`, () => { })
+        product.name = name
+        product.description = description
+        product.brand = brand
+        product.categories = categories
+        product.price = price
+        product.quantity = quantity
+        product.img = img
+        product.save()
         return res.json(product)
     }
 

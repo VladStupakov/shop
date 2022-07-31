@@ -110,7 +110,6 @@ const ProductModal = ({ openProductModal, setOpenProductModal, isProductEdit, se
         if (!img)
             return null
         if (uploadNewImage) {
-            console.log('new image');
             const reader = new FileReader();
             reader.onloadend = () => {
                 setImage(reader.result)

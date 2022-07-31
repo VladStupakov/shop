@@ -19,7 +19,7 @@ class CategoryController {
         return res.json(category)
     }
     async update(req, res) {
-        const { name } = req.body
+        const {name} = req.body
         const { id } = req.params
         const category = await Category.findByIdAndUpdate(id, { name })
         return res.json(category)

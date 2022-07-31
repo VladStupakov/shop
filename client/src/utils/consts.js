@@ -5,6 +5,7 @@ export const CART_ROUTE = '/cart'
 export const PRODUCT_ROUTE = '/product'
 export const PRODUCTS_LIST_ROUTE = '/products'
 export const PROFILE_ROUTE = '/profile'
+export const ADMIN_ROUTE = '/admin'
 export const countries = [
     { code: 'AD', label: 'Andorra', phone: '376' },
     {

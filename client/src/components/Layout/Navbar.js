@@ -1,7 +1,7 @@
-import React, {  useState } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import SearchIcon from '@mui/icons-material/Search';
-import { Avatar, Badge,  Button,  IconButton, InputBase } from '@mui/material';
+import { Avatar, Badge, Button, IconButton, InputBase } from '@mui/material';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
@@ -111,7 +111,7 @@ const Navbar = () => {
             <Right>
                 {
                     user ?
-                        <>                           
+                        <>
                             <ButtonListItem onClick={handleLogoutClick}>
                                 <Button variant="contained" >LOGOUT</Button>
                             </ButtonListItem>
@@ -127,9 +127,18 @@ const Navbar = () => {
                                     }
                                 </ButtonListItem>
                             </CustomLink>
-                            <CustomLink to='/profile'>
-                                    <Avatar sx={{ml: '10px'}}></Avatar>
-                            </CustomLink>
+                            {
+                                user.role === 'admin' ?
+                                    <CustomLink to='/admin'>
+                                        <ButtonListItem>
+                                            <Button variant="contained" color='secondary'>ADMIN PANEL</Button>
+                                        </ButtonListItem>
+                                    </CustomLink>
+                                    :
+                                    <CustomLink to='/profile'>
+                                        <Avatar sx={{ ml: '10px' }}></Avatar>
+                                    </CustomLink>
+                            }
                         </>
                         :
                         <>
