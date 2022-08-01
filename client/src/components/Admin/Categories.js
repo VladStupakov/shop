@@ -14,6 +14,7 @@ const Container = styled.div`
   height: 100%;
   margin: 10px;;
   justify-content: center;
+  align-items: flex-start;
 `
 
 const Category = styled.div`

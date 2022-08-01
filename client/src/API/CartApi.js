@@ -75,3 +75,8 @@ export const getUserOrders = async (id) => {
     return data
 }
 
+export const getOrders = async (page) => {
+    const { data } = await $authHost.get('order/', {params: {page}})
+    return data
+}
+

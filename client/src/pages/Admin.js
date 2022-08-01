@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import styled, { css } from "styled-components"
 import Categories from '../components/Admin/Categories'
+import OrdersList from '../components/Admin/OrdersList'
 
 const Container = styled.div`
   display: flex;
@@ -48,7 +49,7 @@ const DataContainer = styled.div`
   display: flex;
   flex: 3;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   height: 100%;
   width: 100%;
   overflow-y: scroll;
@@ -67,7 +68,7 @@ const Admin = () => {
             case 0:
                 return <Categories/>
             case 1:
-                return
+                return <OrdersList/>
         }
     }
     return (

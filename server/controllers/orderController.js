@@ -27,15 +27,15 @@ const updateProductsQuantity = async (basket) => {
 class OrderController {
     async create(req, res, next) {
         const { basket, tokenId, amount, address } = req.body
-        const {refreshToken} = req.cookies
+        const { refreshToken } = req.cookies
         const user = jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY)
         basket.products.forEach(product => {
             delete product['img']
             delete product['description']
-          });     
+        });
         const isQuantityCheck = await quantityCheck(basket.products)
         if (!isQuantityCheck)
-             return res.json({ error: 'quantity error' })
+            return res.json({ error: 'quantity error' })
         //const totalPrice = MathService.getOrderTotalPrice(basket.products)
         const charge = await stripe.charges.create(
             {
@@ -44,14 +44,18 @@ class OrderController {
                 currency: "uah",
             }
         )
-        const order = await Order.create({ address, user: user.id, products: basket.products, totalPrice: amount /100 })
+        const order = await Order.create({ address, user: user.id, products: basket.products, totalPrice: amount / 100 })
         await updateProductsQuantity(basket)
         return res.json(order)
     }
 
     async getAll(req, res) {
-        const orders = await Order.find()
-        return res.json(orders)
+        const { page } = req.query
+        const limit = 10
+        const orders = await Order.find().limit(limit).skip(limit * (page - 1))
+        const documentsCount = await Order.countDocuments({})
+        const totalPages = Math.ceil(documentsCount / limit)
+        return res.json({ orders, totalPages })
     }
 
     async getOne(req, res) {
